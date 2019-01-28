@@ -1,0 +1,5 @@
+build/
+**/.gradle
+**/.idea/
+**/.DS_Store
+**/*.egg-info
