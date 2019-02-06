@@ -1,4 +1,5 @@
 build/
+venv/
 **/.gradle
 **/.idea/
 **/.DS_Store
