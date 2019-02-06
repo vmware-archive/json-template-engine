@@ -3,8 +3,6 @@
 
 import setuptools
 
-with open("../../../../../README.md", "r") as fh:
-    long_description = fh.read()
 
 setuptools.setup(
     name="jsonteng",
@@ -12,7 +10,7 @@ setuptools.setup(
     author="VMware",
     author_email="jimy@vmware.com",
     description="A template engine for JSON files.",
-    long_description=long_description,
+    long_description="A template engine for parameterized JSON files",
     long_description_content_type="text/markdown",
     url="",
     packages=setuptools.find_packages(),

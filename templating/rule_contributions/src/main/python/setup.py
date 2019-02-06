@@ -1,3 +1,6 @@
+# Copyright 2019 VMware, Inc.
+# SPDX-License-Indentifier: Apache-2.0
+
 import setuptools
 
 setuptools.setup(
@@ -5,7 +8,7 @@ setuptools.setup(
     version="1.0.1",
     author="VMware",
     author_email="jimy@vmware.com",
-    description="Extra rules.",
+    description="Rule contributions.",
     long_description="Rule contributions for networking",
     long_description_content_type="text/markdown",
     url="",

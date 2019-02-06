@@ -32,7 +32,7 @@ as "hello_world_bidning_data.json".
 
 For Python, run the following CLI command
 ```
-    python -m muban.template_engine -b hello_world_binding_data.json hello_world_template.json
+    python -m jsonteng.template_engine -b hello_world_binding_data.json hello_world_template.json
 ```
 The output should be
 ```
@@ -43,11 +43,12 @@ The output should be
 ## Build
 
 - Clone the git repository <code>git clone git@github.com:vmware/json-template-engine.git </code>
-- Change directory to `json-template-engine/templating`
-- For Python, run <code>build_py.sh</code>
-- For Java, run <code>gradlew clean build publishToMavenLocal</code>
-- Python wheel output is located in `build/dist`
-- Java jar file is located in `build/libs`
+- Change directory to `json-template-engine/templating/core`.
+- For Python, run <code>build_py.sh</code>.
+- For Java, run <code>gradlew clean build publishToMavenLocal</code>.
+- Python wheel output is located in `build/dist`.
+- Java jar file is located in `build/libs`.
+- Additional rules are in `json-template-engine/templating/rule_contributions.
 
 
 ## Documentation
