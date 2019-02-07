@@ -19,7 +19,7 @@ class JsonTemplateEngine(object):
     """
     `JsonTemplateEngine` class resolves templates by parameter expansions.
     """
-    def __init__(self, env=None, template_loader=None):
+    def __init__(self, env=None, template_loader=None, verbose=False):
         """
         Construct a new `JsonTemplateEngine`.
         :param env: A JSON object in the string format providing binding data.
@@ -29,13 +29,15 @@ class JsonTemplateEngine(object):
                                 templates used by the main template directly
                                 or indirectly.
         :type template_loader: 'str'
+        :param verbose: Print more info if true.
+        :type verbose: 'bool'
         """
         self._env = env
         if template_loader is not None:
             self._template_loader = template_loader
         else:
             self._template_loader = DefaultJsonLoader(
-                os.environ.get("TEMPLATE_HOME"))
+                os.environ.get("TEMPLATE_HOME"), verbose=verbose)
         self._dup_params = OrderedDict()
         self._stats = Stats()
         self._element_resolver = ElementResolver(
@@ -133,7 +135,7 @@ def main(args=None):
     params = parser.parse_args(args=args)
     binding_file_list = params.binding_data_resources.split(';')
     binding_data_list = list()
-    loader = DefaultJsonLoader()
+    loader = DefaultJsonLoader(verbose=params.verbose)
     for binding_file in binding_file_list:
         binding_data = loader.load(binding_file)
         binding_data_list.append(binding_data)
@@ -151,7 +153,7 @@ def main(args=None):
         rules = params.rules.split(',')
         JsonTemplateEngine.add_rules(rules)
 
-    template_engine = JsonTemplateEngine(env_binding)
+    template_engine = JsonTemplateEngine(env_binding, verbose=params.verbose)
     start_time = datetime.datetime.now()
     resolved_json = template_engine.resolve(
         main_template, binding_data_list)

@@ -11,6 +11,7 @@ repositories {
 
 apply plugin: 'java'
 apply plugin: 'maven-publish'
+apply plugin: 'application'
 
 dependencies {
   compile 'com.fasterxml.jackson.core:jackson-databind:2.9.7'
@@ -31,3 +32,5 @@ publishing {
   repositories {
   }
 }
+
+mainClassName = 'com.vmware.jsonteng.TemplateEngine'
