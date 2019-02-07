@@ -13,14 +13,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DefaultJsonLoader implements JsonLoader {
     private final Stack<DirData> dirStack;
     private final ObjectMapper objectMapper;
+    private final boolean verbose;
 
-    DefaultJsonLoader(String rootPath) {
+    DefaultJsonLoader(String rootPath, boolean verbose) {
         this.dirStack = new Stack<>();
         this.objectMapper = new ObjectMapper();
         if (rootPath == null) {
             rootPath = "";
         }
         dirStack.push(new DirData("root", rootPath));
+        this.verbose = verbose;
     }
 
     @Override
@@ -37,6 +39,9 @@ public class DefaultJsonLoader implements JsonLoader {
             int lastDirIndex = effectiveURL.lastIndexOf('/');
             dirStack.push(new DirData(jsonResource, effectiveURL.substring(0, lastDirIndex+1)));
         } catch (IOException e) {
+            if (verbose) {
+                System.err.println(String.format("Treat %s as JSON value.", effectiveURL));
+            }
             try {
                 jsonObject = objectMapper.readValue((String) jsonResource, Map.class);
             } catch (IOException e1) {

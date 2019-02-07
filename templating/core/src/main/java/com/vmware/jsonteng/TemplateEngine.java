@@ -36,16 +36,17 @@ public class TemplateEngine {
     }
 
     public TemplateEngine(Map<String, ?> env) throws TemplateEngineException {
-        this(env, null);
+        this(env, null, false);
     }
 
-    public TemplateEngine(Map<String, ?> env, JsonLoader templateLoader) throws TemplateEngineException {
+    public TemplateEngine(Map<String, ?> env, JsonLoader templateLoader, boolean verbose)
+            throws TemplateEngineException {
         this.env = env;
         if (templateLoader != null) {
             this.templateLoader = templateLoader;
         }
         else {
-            this.templateLoader = new DefaultJsonLoader(System.getenv("TEMPLATE_HOME"));
+            this.templateLoader = new DefaultJsonLoader(System.getenv("TEMPLATE_HOME"), verbose);
         }
         dupParams = new HashMap<>();
         stats = new Stats();
@@ -118,7 +119,7 @@ public class TemplateEngine {
         }
         String bindingFileList = cmd.getOptionValue("binding-data-resources");
         List<Map<String, ?>> bindingDataList = new ArrayList<>();
-        JsonLoader loader = new DefaultJsonLoader(null);
+        JsonLoader loader = new DefaultJsonLoader(null, cmd.hasOption("verbose"));
         for (String fileName : bindingFileList.split(";")) {
             Map<String, ?> bindingData = null;
             try {
