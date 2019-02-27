@@ -48,7 +48,7 @@ The output should be
 - For Java, run <code>gradlew clean build publishToMavenLocal</code>.
 - Python wheel output is located in `build/dist`.
 - Java jar file is located in `build/libs`.
-- Additional rules are in `json-template-engine/templating/rule_contributions.
+- Additional tags are in `json-template-engine/templating/tag_contributions.
 
 
 ## Documentation
@@ -56,7 +56,7 @@ The output should be
 
 CLI syntax for Python
 ```
-usage: template_engine.py [-h] -b BINDING_DATA_RESOURCES [-e ENV] [-v] [-s] [-d] [-r] [-u RULES] main_template
+usage: template_engine.py [-h] -b BINDING_DATA_RESOURCES [-e ENV] [-v] [-s] [-d] [-r] [-t TAGS] main_template
 
 JSON template engine.
 
@@ -73,11 +73,11 @@ optional arguments:
   -s, --stats           show stats
   -d, --debug           show debug info
   -r, --raw             unformatted output
-  -u RULES, --rules RULES
-                        common separated rule list
+  -t TAGS, --tags TAGS
+                        common separated tag list
 ```
 
-Resource locators could be JSON data. The implementation first tries to locate JSON data through resource locators. If not successful, it treates resource locators as JSON data. Global binding data is a JSON object with parameter assignments. "--rules" are for advanced usage when extending JSON template engine functionalities is needed through custom rules. Each rule is specified by a canonical class path to the rule implementation class.
+Resource locators could be JSON data. The implementation first tries to locate JSON data through resource locators. If not successful, it treates resource locators as JSON data. Global binding data is a JSON object with parameter assignments. "--tags" are for advanced usage when extending JSON template engine functionalities is needed through custom tags. Each tag is specified by a canonical class path to the tag implementation class.
 
 ### Template Specification
 
@@ -111,18 +111,18 @@ With the indirect and nested references, we need to be specific on how parameter
 
 As shown in CLI syntax, it is possible to specify a list of binding data. When resolving parameter
 references, the list is searched from index 0 until the first satisfied match. As shown later, some
-rules tempoarily alters the list to achieve the desired result.
+tags tempoarily alters the list to achieve the desired result.
 
 Although simple parameter substitutions are useful, it is often that we need to manipulate templates
 beyond simple parameter substitutions. Many template engines have powerful features in tags and other
 means for generating arbitrary text stream. However, we restrict this template engine only generates
-JSON for simplicity and readability. We use "rules" to archieve features that simple parameter
-substitutions cannot achieve. Rules are special JSON arrays and objects. If a rule is in the form of a JSON list,
-the first element of the list must be a string and the first character of the string must be a "#". If the rule is in the form of a JSON object, the object key must be a string and the first character of the string must be a "#". The object value must be a list. The rule name is the character sequence after the "#". The rest of the array elements are rule parameters. When a rule is resolved, the result could be one of valid JSON values. A special internal return value is used to indicate that the rule resolves to nothing and therefore, the JSON value where the rule occupies is removed.
+JSON for simplicity and readability. We use "tags" to archieve features that simple parameter
+substitutions cannot achieve. Tags are special JSON arrays and objects. If a tag is in the form of a JSON list,
+the first element of the list must be a string and the first character of the string must be a "#". If the tag is in the form of a JSON object, the object key must be a string and the first character of the string must be a "#". The object value must be a list. The tag name is the character sequence after the "#". The rest of the array elements are tag parameters. When a tag is resolved, the result could be one of valid JSON values. A special internal return value is used to indicate that the tag resolves to nothing and therefore, the JSON value where the tag occupies is removed.
 
-Supported Rules
+Supported Tags
 
-| Rule | Usage | Example |
+| TAG  | Usage | Example |
 | ---- | ----- | ------- |
 | #at  | Return a value at an index or name depending the object. | ["#at", [10, 11, 12], 1]|
 | #exists | Check if a parameter is set. Returns True if a parameter is assigned a value.| ["#exists", "${x}"] |

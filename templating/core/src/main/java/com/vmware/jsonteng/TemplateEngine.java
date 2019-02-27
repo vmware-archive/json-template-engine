@@ -21,7 +21,7 @@ import org.apache.commons.cli.ParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.vmware.jsonteng.rules.RuleMap;
+import com.vmware.jsonteng.tags.TagMap;
 
 public class TemplateEngine {
 
@@ -74,20 +74,20 @@ public class TemplateEngine {
         return stats.getStats();
     }
 
-    public static void addRules(String[] rules) throws TemplateEngineException {
-        for (String rule : rules) {
+    public static void addTags(String[] tags) throws TemplateEngineException {
+        for (String tag : tags) {
             try {
-                Class<?> clazz = Class.forName(rule);
+                Class<?> clazz = Class.forName(tag);
                 Field nameField = clazz.getField("name");
-                RuleMap.addRule((String) nameField.get(null), clazz);
+                TagMap.addTag((String) nameField.get(null), clazz);
             } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-                throw new TemplateEngineException("Unable to add rules", e);
+                throw new TemplateEngineException("Unable to add tags", e);
             }
         }
     }
 
-    public static String[] listRuleNames() {
-        return RuleMap.getRuleNames();
+    public static String[] listTagNames() {
+        return TagMap.getTagNames();
     }
 
     private static void cli(String[] argv) {
@@ -103,8 +103,8 @@ public class TemplateEngine {
                         desc("show debug info").build())
                 .addOption(Option.builder("r").longOpt("raw").required(false)
                                    .desc("unformatted output").build())
-                .addOption(Option.builder("u").longOpt("rules").required(false).hasArg().numberOfArgs(1)
-                                   .desc("common separated rule list").build());
+                .addOption(Option.builder("t").longOpt("tags").required(false).hasArg().numberOfArgs(1)
+                                   .desc("common separated tag list").build());
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
         CommandLine cmd = null;
@@ -155,10 +155,10 @@ public class TemplateEngine {
             System.out.println(String.format("main template: %s", mainTemplate));
         }
 
-        if (cmd.hasOption("rules")) {
-            String[] rules = cmd.getOptionValue("rules").split(",");
+        if (cmd.hasOption("tags")) {
+            String[] tags = cmd.getOptionValue("tags").split(",");
             try {
-                TemplateEngine.addRules(rules);
+                TemplateEngine.addTags(tags);
             } catch (TemplateEngineException e) {
                 e.printStackTrace();
                 System.exit(1);

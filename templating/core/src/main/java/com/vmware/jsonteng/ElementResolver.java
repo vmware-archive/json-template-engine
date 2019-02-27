@@ -8,15 +8,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.vmware.jsonteng.rules.RuleNone;
+import com.vmware.jsonteng.tags.TagNone;
 
 public class ElementResolver {
     private final StringResolver stringResolver;
-    private final RuleResolver ruleResolver;
+    private final TagResolver tagResolver;
 
     ElementResolver(JsonLoader templateLoader, Stats stats) throws TemplateEngineException {
         stringResolver = new StringResolver(this, stats);
-        ruleResolver = new RuleResolver(this, templateLoader);
+        tagResolver = new TagResolver(this, templateLoader);
     }
 
     @SuppressWarnings("unchecked")
@@ -38,28 +38,28 @@ public class ElementResolver {
             for (Map.Entry entry : ((Map<Object, Object>) element).entrySet()) {
                 Object key = entry.getKey();
                 Object value = entry.getValue();
-                if (RuleResolver.isKeyRule(key)) {
+                if (TagResolver.isKeyTag(key)) {
                     if (!(value instanceof List)) {
                         throw new TemplateEngineException(
-                                String.format("Value must be a list if name is a rule: %s %s", key, value));
+                                String.format("Value must be a list if name is a tag: %s %s", key, value));
                     }
-                    List<Object> ruleTemp = new ArrayList<>();
-                    ruleTemp.add(key);
-                    ruleTemp.addAll((List) value);
-                    Object resolvedTuple = resolve(ruleTemp, bindingDataList);
+                    List<Object> tagTemp = new ArrayList<>();
+                    tagTemp.add(key);
+                    tagTemp.addAll((List) value);
+                    Object resolvedTuple = resolve(tagTemp, bindingDataList);
                     if (resolvedTuple instanceof Map) {
                         newElement.putAll((Map) resolvedTuple);
                     }
-                    else if (!(resolvedTuple instanceof RuleNone)) {
+                    else if (!(resolvedTuple instanceof TagNone)) {
                         throw new TemplateEngineException(
-                                String.format("Invalid rule result format for JSON object name rule: %s %s => %s",
+                                String.format("Invalid tag result format for JSON object name tag: %s %s => %s",
                                               key, value, resolvedTuple));
                     }
                 }
                 else {
                     Object newKey = resolve(key, bindingDataList);
                     Object newValue = resolve(value, bindingDataList);
-                    if (newKey instanceof String && !(newValue instanceof RuleNone)) {
+                    if (newKey instanceof String && !(newValue instanceof TagNone)) {
                         newElement.put(newKey, newValue);
                     }
                 }
@@ -67,13 +67,13 @@ public class ElementResolver {
             return newElement;
         }
         else if (element instanceof List) {
-            if (RuleResolver.isRule(element)) {
-                return ruleResolver.resolve((List) element, bindingDataList);
+            if (TagResolver.isTag(element)) {
+                return tagResolver.resolve((List) element, bindingDataList);
             }
             List<Object> newElement = new ArrayList<>();
             for (Object item : (List) element) {
                 Object newItem = resolve(item, bindingDataList);
-                if (!(newItem instanceof RuleNone)) {
+                if (!(newItem instanceof TagNone)) {
                     newElement.add(newItem);
                 }
             }
