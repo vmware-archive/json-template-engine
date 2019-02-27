@@ -5,8 +5,8 @@ from collections import OrderedDict
 from numbers import Number
 
 from .exception import TemplateEngineException
-from .rules.rule_base import RuleBase
-from .rule_resolver import RuleResolver
+from .tags.tag_base import TagBase
+from .tag_resolver import TagResolver
 from .string_resolver import StringResolver
 
 
@@ -24,7 +24,7 @@ class ElementResolver(object):
         :type stats: 'Stats'
         """
         self._string_resolver = StringResolver(self, stats)
-        self._rule_resolver = RuleResolver(self, template_loader)
+        self._tag_resolver = TagResolver(self, template_loader)
 
     def resolve(self, element, binding_data_list):
         """
@@ -49,35 +49,35 @@ class ElementResolver(object):
         elif isinstance(element, dict):
             new_element = OrderedDict()
             for key, value in element.items():
-                if RuleResolver.is_key_rule(key):
+                if TagResolver.is_key_tag(key):
                     if not isinstance(value, list):
                         raise TemplateEngineException(
-                            "Value must be a list if name is a rule: {} {}".
+                            "Value must be a list if name is a tag: {} {}".
                             format(key, value))
-                    rule_temp = [key] + value
+                    tag_temp = [key] + value
                     resolved_tuple = self.resolve(
-                        rule_temp, binding_data_list)
+                        tag_temp, binding_data_list)
                     if isinstance(resolved_tuple, dict):
                         new_element.update(resolved_tuple)
-                    elif resolved_tuple is not RuleBase.RULE_NONE:
+                    elif resolved_tuple is not TagBase.TAG_NONE:
                         raise TemplateEngineException(
-                            "Invalid rule result format for JSON"
-                            " object name rule: {} {} => {}".
+                            "Invalid tag result format for JSON"
+                            " object name tag: {} {} => {}".
                             format(key, value, resolved_tuple))
                 else:
                     new_key = self.resolve(key, binding_data_list)
                     new_value = self.resolve(value, binding_data_list)
                     if isinstance(new_key, str) and \
-                            new_value is not RuleBase.RULE_NONE:
+                            new_value is not TagBase.TAG_NONE:
                         new_element[new_key] = new_value
             return new_element
         elif isinstance(element, list):
-            if RuleResolver.is_rule(element):
-                return self._rule_resolver.resolve(element, binding_data_list)
+            if TagResolver.is_tag(element):
+                return self._tag_resolver.resolve(element, binding_data_list)
             new_element = list()
             for item in element:
                 new_item = self.resolve(item, binding_data_list)
-                if new_item is not RuleBase.RULE_NONE:
+                if new_item is not TagBase.TAG_NONE:
                     new_element.append(new_item)
             return new_element
         raise TemplateEngineException(

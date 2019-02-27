@@ -5,7 +5,7 @@ import re
 
 from .exception import InvalidReferenceException, TemplateEngineException, \
     UnresolvableParameterException
-from .rules.rule_base import RuleBase
+from .tags.tag_base import TagBase
 
 
 class StringResolver(object):
@@ -58,7 +58,7 @@ class StringResolver(object):
                     # resolve the param.
                     value = self._resolve_param(param_name, binding_data_list)
                     # update string.
-                    if value is not RuleBase.RULE_NONE:
+                    if value is not TagBase.TAG_NONE:
                         sub_str_before_param = str_data[:param_start]
                         sub_str_after_param = str_data[i:] \
                             if i < str_len else ""

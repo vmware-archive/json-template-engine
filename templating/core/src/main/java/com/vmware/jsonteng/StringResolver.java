@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vmware.jsonteng.rules.RuleNone;
+import com.vmware.jsonteng.tags.TagNone;
 
 class StringResolver {
     private static final Pattern arrayPattern = Pattern.compile("([a-zA-Z0-9]+)\\[([0-9]+)\\]");
@@ -51,7 +51,7 @@ class StringResolver {
                     int paramStart = stack.pop();
                     String paramName = strData.substring(paramStart+2, i - 1);
                     Object value = resolveParam(paramName, bindingDataList);
-                    if (!(value instanceof RuleNone)) {
+                    if (!(value instanceof TagNone)) {
                         String subStrBeforeParam = strData.substring(0, paramStart);
                         String subStrAfterParam = "";
                         if (i < strLen) {

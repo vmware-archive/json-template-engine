@@ -9,7 +9,7 @@ from collections import OrderedDict
 from importlib import import_module
 
 from jsonteng.element_resolver import ElementResolver
-from jsonteng.rules.rule_map import add_rule, get_rule_names
+from jsonteng.tags.tag_map import add_tag, get_tag_names
 from jsonteng.stats import Stats
 from jsonteng.json_loader import DefaultJsonLoader
 from jsonteng.util import (unescape_json, check_duplicated_binding_data)
@@ -85,26 +85,26 @@ class JsonTemplateEngine(object):
         return self._stats.get_stats()
 
     @staticmethod
-    def add_rules(rules):
+    def add_tags(tags):
         """
-        Add a list of rules to supplement built-in rules.
-        :param rules: A list of rules.
-        :type rules: 'list'
+        Add a list of tags to supplement built-in tags.
+        :param tags: A list of tags.
+        :type tags: 'list'
         """
-        for rule_class in rules:
-            module_path, class_name = rule_class.rsplit('.', 1)
+        for tag_class in tags:
+            module_path, class_name = tag_class.rsplit('.', 1)
             module = import_module(module_path)
             class_object = getattr(module, class_name)
-            add_rule(class_object.name, class_object)
+            add_tag(class_object.name, class_object)
 
     @staticmethod
-    def list_rule_names():
+    def list_tag_names():
         """
-        Return a list of rule names.
-        :return: Rule names.
+        Return a list of tag names.
+        :return: Tag names.
         :rtype: 'list'
         """
-        return get_rule_names()
+        return get_tag_names()
 
 
 def main(args=None):
@@ -129,8 +129,8 @@ def main(args=None):
     parser.add_argument('-r', '--raw', required=False,
                         help="unformatted output",
                         action="store_true")
-    parser.add_argument('-u', '--rules', required=False,
-                        help="common separated rule list")
+    parser.add_argument('-t', '--tags', required=False,
+                        help="common separated tag list")
     parser.add_argument('main_template')
     params = parser.parse_args(args=args)
     binding_file_list = params.binding_data_resources.split(';')
@@ -149,9 +149,9 @@ def main(args=None):
         print("binding data: {}".format(binding_data_list))
         print("main template: {}".format(main_template))
 
-    if params.rules:
-        rules = params.rules.split(',')
-        JsonTemplateEngine.add_rules(rules)
+    if params.tags:
+        tags = params.tags.split(',')
+        JsonTemplateEngine.add_tags(tags)
 
     template_engine = JsonTemplateEngine(env_binding, verbose=params.verbose)
     start_time = datetime.datetime.now()
