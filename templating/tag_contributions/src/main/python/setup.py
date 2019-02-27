@@ -5,7 +5,7 @@ import setuptools
 
 setuptools.setup(
     name="jsonteng-contribs",
-    version="1.0.1",
+    version="1.0.2",
     author="VMware",
     author_email="jimy@vmware.com",
     description="Tag contributions.",

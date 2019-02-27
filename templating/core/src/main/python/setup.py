@@ -6,7 +6,7 @@ import setuptools
 
 setuptools.setup(
     name="jsonteng",
-    version="1.0.1",
+    version="1.0.2",
     author="VMware",
     author_email="jimy@vmware.com",
     description="A template engine for JSON files.",
