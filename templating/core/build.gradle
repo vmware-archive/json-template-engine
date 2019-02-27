@@ -1,7 +1,7 @@
 // Copyright 2019 VMware, Inc.
 // SPDX-License-Indentifier: Apache-2.0
 
-version = "1.0.1"
+version = "1.0.2"
 
 repositories {
   mavenCentral()
