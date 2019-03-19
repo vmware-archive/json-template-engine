@@ -11,6 +11,8 @@ class TagResolver(object):
     """
     # All template tag names start with TAG_MARKER
     TAG_MARKER = '#'
+    # Any character from ":" to the end of the tag name string is ignored.
+    LABEL_SEPARATOR = ":"
 
     def __init__(self, element_resolver, template_loader):
         """
@@ -53,6 +55,10 @@ class TagResolver(object):
         :rtype: JSON object
         """
         tag_name = tag_data[0][1:]
+        # When a tag name is used in a dictionary as a key,
+        # an arbitrary label is allowed to be appended to the tag name
+        # in the format of ":label" to make the key unique.
+        tag_name = tag_name.partition(TagResolver.LABEL_SEPARATOR)[0]
         if tag_name in self._tag_map:
             tag = self._tag_map[tag_name]
             tag_tokens = tag_data[1:]

@@ -41,6 +41,12 @@ public abstract class TagBase {
                 while ((line = errorReader.readLine()) != null) {
                     errorMsg.append(line);
                 }
+                if ("True".equalsIgnoreCase(expr.toString())) {
+                    return true;
+                }
+                else if ("False".equalsIgnoreCase(expr.toString())) {
+                    return false;
+                }
                 throw new TemplateEngineException(String.format("Expression %s is not valid. %s",
                                                                 expr, errorMsg.toString()));
             }

@@ -11,6 +11,7 @@ import com.vmware.jsonteng.tags.TagMap;
 
 public class TagResolver {
     private static final char TAG_MAKER = '#';
+    private static final char LABEL_SEPARATOR = ':';
 
     private final ElementResolver elementResolver;
     private final JsonLoader templateLoader;
@@ -24,6 +25,10 @@ public class TagResolver {
 
     Object resolve(List<?> tagData, List<Map<String, ?>> bindingDataList) throws TemplateEngineException {
         String tagName = ((String) tagData.get(0)).substring(1);
+        int labelIndex = tagName.indexOf(LABEL_SEPARATOR);
+        if (labelIndex != -1) {
+            tagName = tagName.substring(0, labelIndex);
+        }
         if (tagMap.containsKey(tagName)) {
             TagBase tag = tagMap.get(tagName);
             List<?> tagToken = tagData.subList(1, tagData.size());
