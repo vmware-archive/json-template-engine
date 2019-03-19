@@ -5,6 +5,7 @@ package com.vmware.jsonteng;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -45,7 +46,21 @@ public class DefaultJsonLoader implements JsonLoader {
             try {
                 jsonObject = objectMapper.readValue((String) jsonResource, Map.class);
             } catch (IOException e1) {
-                throw new TemplateEngineException(String.format("Invalid template %s", jsonResource));
+                // Not a Map, try List.
+                try {
+                    jsonObject = objectMapper.readValue((String) jsonResource, List.class);
+                } catch (IOException e2) {
+                    // Not a List, try number.
+                    try {
+                        jsonObject = Integer.valueOf(jsonResource);
+                    } catch (NumberFormatException e3) {
+                        try {
+                            jsonObject = Double.valueOf(jsonResource);
+                        } catch (NumberFormatException e4) {
+                            jsonObject = jsonResource;
+                        }
+                    }
+                }
             }
             dirStack.push(new DirData(jsonResource, null));
         }
