@@ -115,10 +115,10 @@ tags tempoarily alters the list to achieve the desired result.
 
 Although simple parameter substitutions are useful, it is often that we need to manipulate templates
 beyond simple parameter substitutions. Many template engines have powerful features in tags and other
-means for generating arbitrary text stream. However, we restrict this template engine only generates
+means for generating arbitrary text stream. However, we restrict this template engine to only generate
 JSON for simplicity and readability. We use "tags" to archieve features that simple parameter
 substitutions cannot achieve. Tags are special JSON arrays and objects. If a tag is in the form of a JSON list,
-the first element of the list must be a string and the first character of the string must be a "#". If the tag is in the form of a JSON object, the object key must be a string and the first character of the string must be a "#". The object value must be a list. The tag name is the character sequence after the "#". The rest of the array elements are tag parameters. When a tag is resolved, the result could be one of valid JSON values. A special internal return value is used to indicate that the tag resolves to nothing and therefore, the JSON value where the tag occupies is removed.
+the first element of the list must be a string and the first character of the string must be a "#". If the tag is in the form of a JSON object, the object key must be a string and the first character of the string must be a "#". The object value must be a list. The tag name is the character sequence after the "#". The rest of the array elements are tag parameters. When a tag is resolved, the result could be one of valid JSON values. A special internal return value is used to indicate that the tag resolves to nothing and therefore, the JSON value where the tag occupies is removed. A tag name may optionally contain a label. This allows the same same tag is used in different keys in a JSON object. The tag name has a format of "#<tag>:<label>". For example, "#one-of:first" and "#one-of:second". Only the <tag> part is significant for mapping the tag to its function. In above example, both "#one-of:first" and "#one-of:second" are processed by the same tag processor.
 
 Supported Tags
 
