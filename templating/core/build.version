@@ -1,0 +1,36 @@
+# Set the build version
+#
+# Run "build_all.sh" to build artifacts for all platforms.
+#
+# After the build is completed, upload artifacts to public repositories.
+# Python - pypi
+# Java - Maven Central
+#
+# All build artifacts are in ./build directory.
+#
+# Python artifacts are located in build/python/dist/
+# To upload a version to pypi, run
+# python3 -m twine upload build/python/dist/*
+#
+# Java artifacts are located in build/libs/
+# To upload a version to Maven Central, do
+# 1) ./gradlew uploadArchives
+# 2) Sign in to https://oss.sonatype.org/
+# 3) Click on "Staging Repositories
+# 4) The uploaded artifacts from step 1) should be shown as comvmware-xxxx.
+# 5) Archive the artifacts.
+#
+# Note: uploadArchives task requires proper artifact signing keys to be prepared in the build
+# environment. To prepare the signing environment, follow these steps.
+# 1) Find the short key format. gpg --list-keys --keyid-format 0xSHORT
+# 2) Create a secret key ring. gpg --export-secret-keys > ~/.gnupg/secring.gpg
+# 3) Create a ascii public key. gpg --armor --export <key>
+# 4) Upload the key. http://pool.sks-keyservers.net:11371/
+# Make sure the key does not contain a subkey. Otherwise, gradle signing task would use the subkey
+# instead of the main key.
+# 5) Remove a subkey. gpg --edit-key
+#
+# Add a tag in the git repository master branch such as v1.0.4-alpha
+# Use github release management feature to release artifacts with a title such as Release v1.0.4.
+#
+export JSONTENG_BUILD_VERSION=1.0.4
