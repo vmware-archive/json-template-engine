@@ -3,6 +3,7 @@
 
 package com.vmware.jsonteng;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -82,14 +83,10 @@ class StringResolver {
     }
 
     private Object resolveParam(String paramName, List<Map<String,?>> bindingDataList) throws TemplateEngineException {
-        String[] paramTokens = paramName.split("\\.");
-        if (paramTokens.length < 1) {
-            throw new TemplateEngineException(
-                    String.format("Invalid parameter reference %s.", paramName));
-        }
+        Integer[] separatorIndices = StringResolver.collectSeparatorIndices(paramName);
         for (Map<String, ?> bindingData : bindingDataList) {
             try {
-                Object value = StringResolver.findParam(paramTokens, bindingData);
+                Object value = StringResolver.findParam(paramName, separatorIndices, bindingData);
                 if (value != null) {
                     stats.updateStats(paramName);
                     return value;
@@ -102,35 +99,68 @@ class StringResolver {
     }
 
     @SuppressWarnings("unchecked")
-    private static Object findParam(String[] paramTokens, Map<String, ?> bindingData) throws InvalidReferenceException {
+    private static Object findParam(String paramName, Integer[] separatorIndices, Map<String, ?> bindingData)
+        throws InvalidReferenceException {
+        int tokenStart = 0;
         Object nextData = bindingData;
-        for (String token : paramTokens) {
-            int index = -1;
-            Matcher m = arrayPattern.matcher(token);
-            if (m.matches()) {
-                token = m.group(1);
-                String indexStr = m.group(2);
-                if (indexStr != null) {
-                    index = Integer.parseInt(indexStr);
-                }
-            }
+        for (int i = 0; i < separatorIndices.length + 1; i++) {
             if (nextData == null) {
                 throw new InvalidReferenceException("invalid scope");
             }
-            if (((Map<String, ?>) nextData).containsKey(token)) {
-                nextData = ((Map<String, ?>) nextData).get(token);
+            String key = paramName.substring(tokenStart);
+            try {
+                return StringResolver.matchKey(key, (Map<String, ?>) nextData);
             }
-            else {
-                throw new InvalidReferenceException("mismatch binding data");
+            catch (InvalidReferenceException e) {
+                // ignore
             }
-            if (index >= 0 && nextData instanceof List) {
-                if (index >= ((List) nextData).size()) {
-                    return null;
-                }
-                nextData = ((List) nextData).get(index);
+            if (i < separatorIndices.length) {
+                String token = paramName.substring(tokenStart, separatorIndices[i]);
+                nextData = StringResolver.matchKey(token, (Map<String, ?>) nextData);
+                tokenStart = separatorIndices[i] + 1;
             }
         }
-        return nextData;
+        throw new InvalidReferenceException("mismatch binding data");
+    }
+
+    private static Object matchKey(String key, Map<String, ?> params) throws InvalidReferenceException {
+        Object value;
+        int index = -1;
+        Matcher m = arrayPattern.matcher(key);
+        if (m.matches()) {
+            key = m.group(1);
+            String indexStr = m.group(2);
+            if (indexStr != null) {
+                index = Integer.parseInt(indexStr);
+            }
+        }
+        if (params.containsKey(key)) {
+            value = params.get(key);
+        }
+        else {
+            throw new InvalidReferenceException("mismatch binding data");
+        }
+        if (index >= 0 && params instanceof List) {
+            if (index >= ((List) params).size()) {
+                return null;
+            }
+            value = ((List) params).get(index);
+        }
+        return value;
+    }
+
+    private static Integer[] collectSeparatorIndices(String paramName) {
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < paramName.length(); i++) {
+            char c = paramName.charAt(i);
+            if (c == '\\') {
+                i += 1;
+            }
+            else if (c == '.') {
+                indices.add(i);
+            }
+        }
+        return indices.toArray(new Integer[0]);
     }
 
     private String dataToString(Object value) throws TemplateEngineException {

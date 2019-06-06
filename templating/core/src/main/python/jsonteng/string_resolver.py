@@ -94,13 +94,12 @@ class StringResolver(object):
         :return: JSON value
         :rtype: JSON object
         """
-        param_tokens = param_name.split('.')
-        if len(param_tokens) < 1:
-            raise TemplateEngineException(
-                "Invalid parameter reference {}.".format(param_name))
+        separator_indices = \
+            StringResolver._collect_separator_indices(param_name)
         for binding_data in binding_data_list:
             try:
-                value = StringResolver._find_param(param_tokens, binding_data)
+                value = StringResolver._find_param(
+                    param_name, separator_indices, binding_data)
                 self._stats.update_stats(param_name)
                 return value
             except InvalidReferenceException:
@@ -109,32 +108,88 @@ class StringResolver(object):
             "Unable to resolve parameter {}.".format(param_name))
 
     @staticmethod
-    def _find_param(param_tokens, binding_data):
+    def _find_param(param_name, separator_indices, binding_data):
         """
         Find the parameter value in this bindign_data. The result could be
-        None which is a valid JSON value null.
-        :param param_tokens: A list of parameter tokens.
-        :type param_tokens: 'list'
+        None which is a valid JSON value null. The parameter is matched
+        as a whole string. If the whole string does not match any, the prefix
+        of the first dot is used to sub parameter map and the rest of the
+        string is matched against the sub parameter map. This process is
+        repeated until a value is found. For example, parameter "x.y.z" is
+        matched against the binding_data. If the binding contains "x.y.z",
+        its value is returned. Else, "x" is used to match a sub parameter map
+        in the binding data. If a sub parameter map is found, "y.z" is used to
+        match a parameter in the sub parameter map. This process is repeated.
+        :param param_name: Param name string.
+        :type param_name: 'str'
+        :param separator_indices: A list of parameter separator indices.
+        :type separator_indices: 'list'
         :param binding_data: Parameter value map.
         :type binding_data: 'dict'
         :return: JSON value
         """
+        count = len(separator_indices) + 1
+        token_start = 0
         next_data = binding_data
-        for token in param_tokens:
-            index = -1
-            m = re.search("([a-zA-Z0-9]+)\[([0-9]+)\]", token)
-            if m:
-                token = m.group(1)
-                index = int(m.group(2))
-
+        for i in range(count):
             if next_data is None:
                 raise InvalidReferenceException("invalid scope")
-            if token in next_data:
-                next_data = next_data[token]
+            key = param_name[token_start:]
+            try:
+                return StringResolver._match_key(key, next_data)
+            except InvalidReferenceException:
+                pass
+            if i < len(separator_indices):
+                token = param_name[token_start:separator_indices[i]]
+                next_data = StringResolver._match_key(token, next_data)
+                token_start = separator_indices[i] + 1
+        raise InvalidReferenceException("mismatch binding data")
+
+    @staticmethod
+    def _match_key(key, params):
+        """
+        Find the key in params. If found, returns value.
+        :param key: Key to be matched.
+        :type key: 'str'
+        :param params: Binding data map to be searched.
+        :type params: 'dict'
+        :return: JSON value
+        """
+        index = -1
+        m = re.search("([a-zA-Z0-9]+)\[([0-9]+)\]", key)
+        if m:
+            key = m.group(1)
+            index = int(m.group(2))
+
+        if key in params:
+            value = params[key]
+        else:
+            raise InvalidReferenceException("mismatch binding data")
+        if index >= 0 and isinstance(value, list):
+            if index >= len(value):
+                return None
+            return value[index]
+        return value
+
+    @staticmethod
+    def _collect_separator_indices(param_name):
+        """
+        Locate all parameter name separators (dots).
+        :param param_name: Parameter name.
+        :type param_name: 'str'
+        :return: A list of parameter separator indices.
+        :rtype: 'list'
+        """
+        indices = list()
+        str_len = len(param_name)
+        i = 0
+        while i < str_len:
+            c = param_name[i]
+            if c == '\\':
+                i += 2
+            elif c == '.':
+                indices.append(i)
+                i += 1
             else:
-                raise InvalidReferenceException("mismatch binding data")
-            if index >= 0 and isinstance(next_data, list):
-                if index >= len(next_data):
-                    return None
-                next_data = next_data[index]
-        return next_data
+                i += 1
+        return indices

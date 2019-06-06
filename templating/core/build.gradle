@@ -38,7 +38,7 @@ signing {
 
 group = "com.vmware.jsonteng"
 archivesBaseName = "jsonteng"
-version = "1.0.3"
+version = "$System.env.JSONTENG_BUILD_VERSION"
 
 uploadArchives {
   repositories {
