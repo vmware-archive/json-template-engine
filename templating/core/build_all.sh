@@ -9,5 +9,5 @@ rm -rf ./build
 ./build_py.sh
 
 # Build java
-./gradlew build
+./gradlew build uploadArchive
 

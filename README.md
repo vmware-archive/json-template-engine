@@ -97,17 +97,31 @@ Referencing a binding data value is similar to referencing a JSON value in JavaS
 
 ```
 {
-  "x": [
+  "x": [{
     "y": {
       "z": 1
     }
-  ]
+  }]
 }
 ```
 
 <code>${x[0].y.z}</code> returns 1.
 
-With the indirect and nested references, we need to be specific on how parameter references are resolved. Parameter references are always resolved in a late binding fasion. Intermediate resolved parameters are not stored.
+With the indirect and nested references, we need to be specific on how parameter references are resolved. Parameter references are resolved in an eager manner. For example, with
+
+```
+{
+  "x": [{
+    "y.z": 2,
+    "y": {
+      "z": 1
+    }
+  }]
+}
+```
+the same parameter reference would return 2 and "z" becomes shawdowed and not reachable.
+
+Parameter references are always resolved in a late binding fasion. Intermediate resolved parameters are not stored.
 
 As shown in CLI syntax, it is possible to specify a list of binding data. When resolving parameter
 references, the list is searched from index 0 until the first satisfied match. As shown later, some
