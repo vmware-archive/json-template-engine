@@ -25,7 +25,7 @@ public class OneOfTag extends TagBase {
         int tokenCount = tagTokens.size();
         if (tokenCount < 1) {
             throw new TemplateEngineException(
-                    String.format("Tag \"%s\" needs at least 1 parameters. Parameters given %s", name, tagTokens));
+                    String.format("Tag \"%s\" requires at least 1 parameter. Parameters given %s", name, tagTokens));
         }
         for (int i = 0; i < tokenCount; i++) {
             Object item = tagTokens.get(i);
@@ -39,7 +39,7 @@ public class OneOfTag extends TagBase {
                 }
             }
             else {
-                if (i == (tokenCount -1) && !(item instanceof List)) {
+                if (i == (tokenCount - 1) && !(item instanceof List)) {
                     return elementResolver.resolve(tagTokens.get(tokenCount - 1), bindingDataList);
                 }
                 else {

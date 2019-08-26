@@ -3,5 +3,6 @@ venv/
 **/.gradle
 **/.idea/
 **/.DS_Store
+**/.vscode
 **/*.egg-info
 **/__pycache__

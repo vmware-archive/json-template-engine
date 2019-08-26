@@ -36,7 +36,7 @@ class Ipv4HostNetmaskTag(TagBase):
         token_count = len(tag_tokens)
         if token_count < 1:
             raise TemplateEngineException(
-                "Tag \"{}\" needs at least 1 parameter."
+                "Tag \"{}\" requires 1 parameter."
                 " Parameters given {}".format(Ipv4HostNetmaskTag.name, tag_tokens))
         network = ipaddress.ip_network(self._element_resolver.resolve(
             tag_tokens[0], binding_data_list))

@@ -47,6 +47,14 @@ public class ForEachTag extends TagBase {
             bindingDataList.add(0, data);
             indexData.put("_index_", i);
             bindingDataList.add(0, indexData);
+            if (tagTokens.size() == 3) {
+                Object conditionExpr = elementResolver.resolve(tagTokens.get(2), bindingDataList);
+                if (!safeEval(conditionExpr)) {
+                    bindingDataList.remove(0);
+                    bindingDataList.remove(0);
+                    continue;
+                }
+            }
             Object resolvedTemplate = elementResolver.resolve(templateJson, bindingDataList);
             bindingDataList.remove(0);
             bindingDataList.remove(0);

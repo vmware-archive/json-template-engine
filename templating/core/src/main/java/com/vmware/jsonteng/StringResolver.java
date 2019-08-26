@@ -52,23 +52,21 @@ class StringResolver {
                     int paramStart = stack.pop();
                     String paramName = strData.substring(paramStart+2, i - 1);
                     Object value = resolveParam(paramName, bindingDataList);
-                    if (!(value instanceof TagNone)) {
-                        String subStrBeforeParam = strData.substring(0, paramStart);
-                        String subStrAfterParam = "";
-                        if (i < strLen) {
-                            subStrAfterParam = strData.substring(i);
-                        }
-                        if (subStrBeforeParam.length() > 0 || subStrAfterParam.length() > 0) {
-                            String newStr;
-                            newStr = subStrBeforeParam
-                                     + dataToString(elementResolver.resolve(value, bindingDataList))
-                                     + subStrAfterParam;
-                            strData = newStr;
-                            strLen = strData.length();
-                            i = paramStart;
-                        } else {
-                            return elementResolver.resolve(value, bindingDataList);
-                        }
+                    String subStrBeforeParam = strData.substring(0, paramStart);
+                    String subStrAfterParam = "";
+                    if (i < strLen) {
+                        subStrAfterParam = strData.substring(i);
+                    }
+                    if (subStrBeforeParam.length() > 0 || subStrAfterParam.length() > 0) {
+                        String newStr;
+                        newStr = subStrBeforeParam
+                                 + dataToString(elementResolver.resolve(value, bindingDataList))
+                                 + subStrAfterParam;
+                        strData = newStr;
+                        strLen = strData.length();
+                        i = paramStart;
+                    } else {
+                        return elementResolver.resolve(value, bindingDataList);
                     }
                 }
             }
@@ -100,18 +98,18 @@ class StringResolver {
 
     @SuppressWarnings("unchecked")
     private static Object findParam(String paramName, Integer[] separatorIndices, Map<String, ?> bindingData)
-        throws InvalidReferenceException {
+        throws TemplateEngineException {
         int tokenStart = 0;
         Object nextData = bindingData;
         for (int i = 0; i < separatorIndices.length + 1; i++) {
-            if (nextData == null) {
+            if (nextData == null || !(nextData instanceof Map)) {
                 throw new InvalidReferenceException("invalid scope");
             }
             String key = paramName.substring(tokenStart);
             try {
                 return StringResolver.matchKey(key, (Map<String, ?>) nextData);
             }
-            catch (InvalidReferenceException e) {
+            catch (InvalidReferenceException ignore) {
                 // ignore
             }
             if (i < separatorIndices.length) {
@@ -123,30 +121,30 @@ class StringResolver {
         throw new InvalidReferenceException("mismatch binding data");
     }
 
-    private static Object matchKey(String key, Map<String, ?> params) throws InvalidReferenceException {
-        Object value;
-        int index = -1;
+    private static Object matchKey(String key, Map<String, ?> data) throws TemplateEngineException {
         Matcher m = arrayPattern.matcher(key);
         if (m.matches()) {
             key = m.group(1);
             String indexStr = m.group(2);
             if (indexStr != null) {
-                index = Integer.parseInt(indexStr);
+                int index = Integer.parseInt(indexStr);
+                if (index < 0) {
+                    throw new TemplateEngineException(String.format("Parameter index is negative: %s", key));
+                }
+                if (data.containsKey(key)) {
+                    Object value = data.get(key);
+                    if (value instanceof List && index < ((List) value).size()) {
+                        return ((List) value).get(index);
+                    }
+                }
+                throw new InvalidReferenceException("mismatch binding data");
             }
+            throw new TemplateEngineException(String.format("Parameter index missing: %s", key));
         }
-        if (params.containsKey(key)) {
-            value = params.get(key);
+        if (data.containsKey(key)) {
+            return data.get(key);
         }
-        else {
-            throw new InvalidReferenceException("mismatch binding data");
-        }
-        if (index >= 0 && params instanceof List) {
-            if (index >= ((List) params).size()) {
-                return null;
-            }
-            value = ((List) params).get(index);
-        }
-        return value;
+        throw new InvalidReferenceException("mismatch binding data");
     }
 
     private static Integer[] collectSeparatorIndices(String paramName) {

@@ -28,6 +28,12 @@ public abstract class TagBase {
 
     protected boolean safeEval(Object expr) throws TemplateEngineException {
         try {
+            if ("True".equals(expr)) {
+                return true;
+            }
+            else if ("False".equals(expr)){
+                return false;
+            }
             String script = String.format("print(eval('%s', {'__builtins__': None}, {}))", expr);
             Process p = Runtime.getRuntime().exec("python -");
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()))) {

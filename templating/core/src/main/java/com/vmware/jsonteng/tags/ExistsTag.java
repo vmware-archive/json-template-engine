@@ -33,8 +33,8 @@ public class ExistsTag extends TagBase {
             elementResolver.resolve(data, bindingDataList);
         }
         catch (UnresolvableParameterException e) {
-            return "1==0";
+            return "False";
         }
-        return "1==1";
+        return "True";
     }
 }

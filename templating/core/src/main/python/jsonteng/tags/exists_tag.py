@@ -39,5 +39,5 @@ class ExistsTag(TagBase):
         try:
             self._element_resolver.resolve(data, binding_data_list)
         except UnresolvableParameterException:
-            return "1==0"
-        return "1==1"
+            return "False"
+        return "True"
