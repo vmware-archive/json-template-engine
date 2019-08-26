@@ -58,25 +58,24 @@ class StringResolver(object):
                     # resolve the param.
                     value = self._resolve_param(param_name, binding_data_list)
                     # update string.
-                    if value is not TagBase.TAG_NONE:
-                        sub_str_before_param = str_data[:param_start]
-                        sub_str_after_param = str_data[i:] \
-                            if i < str_len else ""
-                        if sub_str_before_param or sub_str_after_param:
-                            # if the value is only part of the original
-                            # string, treat it as a string and reprocess
-                            new_str = sub_str_before_param + \
-                                      str(self._element_resolver.resolve(
-                                          value, binding_data_list)) + \
-                                      sub_str_after_param
-                            str_data = new_str
-                            str_len = len(str_data)
-                            i = param_start
-                        else:
-                            # if the value replaces the whole string,
-                            # return the value
-                            return self._element_resolver.resolve(
-                                value, binding_data_list)
+                    sub_str_before_param = str_data[:param_start]
+                    sub_str_after_param = str_data[i:] \
+                        if i < str_len else ""
+                    if sub_str_before_param or sub_str_after_param:
+                        # if the value is only part of the original
+                        # string, treat it as a string and reprocess
+                        new_str = sub_str_before_param + \
+                                  str(self._element_resolver.resolve(
+                                      value, binding_data_list)) + \
+                                  sub_str_after_param
+                        str_data = new_str
+                        str_len = len(str_data)
+                        i = param_start
+                    else:
+                        # if the value replaces the whole string,
+                        # return the value
+                        return self._element_resolver.resolve(
+                            value, binding_data_list)
             else:
                 i += 1
         if stack:
@@ -132,7 +131,7 @@ class StringResolver(object):
         token_start = 0
         next_data = binding_data
         for i in range(count):
-            if next_data is None:
+            if next_data is None or not isinstance(next_data, dict):
                 raise InvalidReferenceException("invalid scope")
             key = param_name[token_start:]
             try:
@@ -146,30 +145,31 @@ class StringResolver(object):
         raise InvalidReferenceException("mismatch binding data")
 
     @staticmethod
-    def _match_key(key, params):
+    def _match_key(key, data):
         """
         Find the key in params. If found, returns value.
         :param key: Key to be matched.
         :type key: 'str'
-        :param params: Binding data map to be searched.
-        :type params: 'dict'
+        :param data: Binding data map to be searched.
+        :type data: 'dict'
         :return: JSON value
         """
-        index = -1
         m = re.search("([a-zA-Z0-9]+)\[([0-9]+)\]", key)
         if m:
             key = m.group(1)
             index = int(m.group(2))
-
-        if key in params:
-            value = params[key]
-        else:
+            if index < 0:
+                raise TemplateEngineException(
+                    "Parameter index is negative: %s".format(key))
+            if key in data:
+                value = data[key]
+                if isinstance(value, list) and index < len(value):
+                    return value[index]
             raise InvalidReferenceException("mismatch binding data")
-        if index >= 0 and isinstance(value, list):
-            if index >= len(value):
-                return None
-            return value[index]
-        return value
+
+        if key in data:
+            return data[key]
+        raise InvalidReferenceException("mismatch binding data")
 
     @staticmethod
     def _collect_separator_indices(param_name):

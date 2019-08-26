@@ -25,9 +25,9 @@ public class Ipv4SubnetTag extends TagBase {
     @Override
     public Object process(List<?> tagTokens, List<Map<String, ?>> bindingDataList) throws TemplateEngineException {
         int tokenCount = tagTokens.size();
-        if (tokenCount < 3) {
+        if (tokenCount != 3) {
             throw new TemplateEngineException(
-                    String.format("Tag \"%s\" needs at least 3 parameters. Parameters given %s", name, tagTokens));
+                    String.format("Tag \"%s\" requires 3 parameters. Parameters given %s", name, tagTokens));
         }
         String network = (String) this.elementResolver.resolve(tagTokens.get(0), bindingDataList);
         int subnetCount = Integer.parseInt(this.elementResolver.resolve(

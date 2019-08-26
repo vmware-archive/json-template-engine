@@ -11,3 +11,5 @@ rm -rf ./build
 # Build java
 ./gradlew build uploadArchive
 
+# Build C++
+make clean cli

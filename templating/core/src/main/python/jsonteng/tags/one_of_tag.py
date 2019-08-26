@@ -35,7 +35,7 @@ class OneOfTag(TagBase):
         token_count = len(tag_tokens)
         if token_count < 1:
             raise TemplateEngineException(
-                "Tag \"{}\" needs at least 1 parameter."
+                "Tag \"{}\" requires at least 1 parameter."
                 " Parameters given {}".format(OneOfTag.name, tag_tokens))
         for index, item in enumerate(tag_tokens):
             if isinstance(item, list) and len(item) == 2:

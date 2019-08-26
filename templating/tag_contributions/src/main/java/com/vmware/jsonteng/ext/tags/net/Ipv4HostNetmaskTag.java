@@ -27,7 +27,7 @@ public class Ipv4HostNetmaskTag extends TagBase {
         int tokenCount = tagTokens.size();
         if (tokenCount < 1) {
             throw new TemplateEngineException(
-                    String.format("Tag \"%s\" needs at least 1 parameters. Parameters given %s", name, tagTokens));
+                    String.format("Tag \"%s\" requires 1 parameter. Parameters given %s", name, tagTokens));
         }
         String resolvedNetwork = (String) this.elementResolver.resolve(
                 tagTokens.get(0), bindingDataList);

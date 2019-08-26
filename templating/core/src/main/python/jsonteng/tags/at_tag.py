@@ -2,6 +2,7 @@
 # SPDX-License-Indentifier: Apache-2.0
 
 from .tag_base import TagBase
+from ..exception import TemplateEngineException
 
 
 class AtTag(TagBase):
@@ -31,7 +32,7 @@ class AtTag(TagBase):
         :rtype: JSON object
         """
         if len(tag_tokens) != 2:
-            raise Exception(
+            raise TemplateEngineException(
                 "Tag \"{}\" requires 2 parameter. Parameters given {}".
                 format(AtTag.name, tag_tokens))
         data = tag_tokens[0]

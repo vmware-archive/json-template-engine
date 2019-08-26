@@ -25,9 +25,9 @@ public class Ipv4HostIpTag extends TagBase {
     @Override
     public Object process(List<?> tagTokens, List<Map<String, ?>> bindingDataList) throws TemplateEngineException {
         int tokenCount = tagTokens.size();
-        if (tokenCount < 2) {
+        if (tokenCount != 2) {
             throw new TemplateEngineException(
-                    String.format("Tag \"%s\" needs at least 2 parameters. Parameters given %s", name, tagTokens));
+                    String.format("Tag \"%s\" requires 2 parameters. Parameters given %s", name, tagTokens));
         }
         String resolvedNetwork = (String) this.elementResolver.resolve(
                 tagTokens.get(0), bindingDataList);

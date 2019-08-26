@@ -26,11 +26,11 @@ class Utils {
         else if (element instanceof Map) {
             Map<Object, Object> newElement = new HashMap<>();
             for (Map.Entry entry : ((Map<Object, Object>) element).entrySet()) {
-                Object item = entry.getKey();
+                Object key = entry.getKey();
                 Object value = entry.getValue();
-                Object newItem = unescapeJson(item);
+                Object newKey = unescapeJson(key);
                 Object newValue = unescapeJson(value);
-                newElement.put(newItem, newValue);
+                newElement.put(newKey, newValue);
             }
             return newElement;
         }
