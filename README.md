@@ -14,6 +14,7 @@ significant differences.
 - Download a language specific template engine distribution.
 - For Python, add the path of the library to PYTHONPATH environmental variable.
 - For Java, add the path of the library to the class path of a JVM.
+- For C++, use the header files directly or use it as a CLI.
 
 ## Try it out
 Make copies of samples/getting_started/hello_world_template.json and samples/getting_started/hello_world_binding_data.json or save
@@ -48,7 +49,9 @@ The output should be
 - For Java, run <code>gradlew clean build publishToMavenLocal</code>.
 - Python wheel output is located in `build/dist`.
 - Java jar file is located in `build/libs`.
+- For C++, run <code>make clean cli</code>. The header files can be included directly.
 - Additional tags are in `json-template-engine/templating/tag_contributions.
+- To build everything, run <code> =./build_all.sh</code>.
 
 
 ## Documentation
