@@ -3,13 +3,26 @@
 source build.version
 
 # Remove build directory
+echo ">>>> Remvoing ./build ..."
 rm -rf ./build
+echo
 
-# Build python
+# Build Python
+echo ">>>> Build Python version ..."
 ./build_py.sh
+echo
 
-# Build java
-./gradlew build uploadArchive
+# Build Java
+echo ">>>> Build Java version ..."
+./build_java.sh
+echo
 
 # Build C++
-make clean cli
+echo ">>>> Build C++ version ..."
+./build_c++.sh
+echo
+
+# Build Go
+echo ">>>> Build Go version ..."
+./build_go.sh
+echo

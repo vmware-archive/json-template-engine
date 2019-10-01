@@ -10,7 +10,7 @@ OBJFILES := $(foreach obj,$(SRCS:%.cpp=%.o),$(OBJDIR)/$(subst $(SRCDIR)/,,$(obj)
 DEPFILES := $(foreach dep,$(SRCS:%.cpp=%.d),$(DEPDIR)/$(subst $(SRCDIR)/,,$(dep)))
 
 
-CXXFLAGS = -c -g3 -std=c++17 -fPIC -Wall -I$(SRCDIR)/include -I../tag_contributions/src/main/c++/include -I$(SRCDIR)/ext/json
+CXXFLAGS = -c -g -O -std=c++17 -fPIC -Wall -I$(SRCDIR)/include -I../tag_contributions/src/main/c++/include -I$(SRCDIR)/ext/json
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
 
 COMPILE.c = $(CXX) $(DEPFLAGS) $(CXXFLAGS) $(TARGET_ARCH)
@@ -24,7 +24,7 @@ $(DEPFILES):
 cli: $(CLI)
 
 $(CLI): $(OBJFILES)
-	$(CXX) -g3 -std=c++17 $^ -o $@_$(JSONTENG_BUILD_VERSION)
+	$(CXX) -g -O -std=c++17 $^ -o $@_linux_x64_$(JSONTENG_BUILD_VERSION)
 	tar czf $(BUILDDIR)/source_c++_$(JSONTENG_BUILD_VERSION).tgz -C $(SRCDIR) .
 
 clean:

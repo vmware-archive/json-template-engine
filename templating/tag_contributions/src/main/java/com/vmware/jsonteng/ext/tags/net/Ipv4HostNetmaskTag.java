@@ -25,7 +25,7 @@ public class Ipv4HostNetmaskTag extends TagBase {
     @Override
     public Object process(List<?> tagTokens, List<Map<String, ?>> bindingDataList) throws TemplateEngineException {
         int tokenCount = tagTokens.size();
-        if (tokenCount < 1) {
+        if (tokenCount != 1) {
             throw new TemplateEngineException(
                     String.format("Tag \"%s\" requires 1 parameter. Parameters given %s", name, tagTokens));
         }

@@ -33,4 +33,4 @@
 # Add a tag in the git repository master branch such as v1.0.4-alpha
 # Use github release management feature to release artifacts with a title such as Release v1.0.4.
 #
-export JSONTENG_BUILD_VERSION=1.0.5
+export JSONTENG_BUILD_VERSION=1.0.6
