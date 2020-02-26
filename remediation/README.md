@@ -88,7 +88,7 @@ format is similar to a partial URI path.
 JSON Remediator attempts to match the current element JSON pointer to `path` regex
 pattern. If there is a match, the corresponding `descriptor` functions are applied
 to this element. A remediation descriptor has the form of,
-```json
+```text
 {
   "path": "<regex pattern|required>",
   "descriptor": {
@@ -104,7 +104,7 @@ current element are traversed. `@params` is a dictionary of descriptor defined
 parameters that are passed to `@before` and `@after` functions.
 
 JSON Remediator uses a list of remediation descriptors,
-```json
+```text
 [
   {<remediation descriptor 1>},
   {<remediation descriptor 2>},
@@ -174,7 +174,7 @@ For example, `/k1.@after$sample_sum.sum_k`. Later function calls may query earli
 When used as a library, JSON Remediator can be called as
 ```python
     remediator = jsonreme.remediator.JsonRemediator(descriptors)
-    workspace = remediator.remediate(target, companion)
+    workspace = remediator.remediate(target, companion, env)
 ```
 After the remediation, the workspace is returned for further processing if needed.
 ## CLI Usage
