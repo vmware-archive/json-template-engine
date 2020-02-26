@@ -1,0 +1,7 @@
+{
+  "my_key_1": {
+    "my_sub_key_1": ["xyK", "xyb", "xyc"],
+    "my_sub_key_2": "xyz"
+  },
+  "my_key_2": "abc"
+}
