@@ -1,0 +1,8 @@
+[
+  {
+    "path": ".*/k[0-9]*",
+    "descriptor": {
+      "@after": "sample_sum.sum_k"
+    }
+  }
+]
