@@ -1,11 +1,12 @@
 # Copyright 2019 VMware, Inc.
 # SPDX-License-Identifier: Apache-2.0
 
+import os
 import setuptools
 
 setuptools.setup(
     name="jsonreme",
-    version="1.0.0",
+    version=os.getenv("JSONTENG_BUILD_VERSION"),
     author="VMware",
     author_email="jimy@vmware.com",
     description="JSON Remediator.",
