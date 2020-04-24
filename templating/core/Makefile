@@ -5,7 +5,8 @@ OBJDIR := $(BUILDDIR)/objs
 DEPDIR	:= $(BUILDDIR)/deps
 
 SRCS := $(wildcard $(SRCDIR)/cli/*.cpp)
-CLI := $(BUILDDIR)/jsonteng
+EXE_NAME := jsonteng
+CLI := $(BUILDDIR)/$(EXE_NAME)
 OBJFILES := $(foreach obj,$(SRCS:%.cpp=%.o),$(OBJDIR)/$(subst $(SRCDIR)/,,$(obj)))
 DEPFILES := $(foreach dep,$(SRCS:%.cpp=%.d),$(DEPDIR)/$(subst $(SRCDIR)/,,$(dep)))
 
@@ -26,6 +27,7 @@ cli: $(CLI)
 $(CLI): $(OBJFILES)
 	$(CXX) -g -O -std=c++17 $^ -o $@_linux_x64_$(JSONTENG_BUILD_VERSION)
 	tar czf $(BUILDDIR)/source_c++_$(JSONTENG_BUILD_VERSION).tgz -C $(SRCDIR) .
+	cd $(BUILDDIR); ln -s $(EXE_NAME)_linux_x64_$(JSONTENG_BUILD_VERSION) $(EXE_NAME)
 
 clean:
 	@rm -rf $(BUILDDIR)
