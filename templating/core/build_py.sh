@@ -11,6 +11,7 @@ pushd src/main/python
 python3 setup.py sdist bdist_wheel
 rm -rf ../../../build/python/dist
 mv dist ../../../build/python/
-rm -rf build muban.egg-info
+rm -rf build jsonteng.egg-info
 popd
+pushd build/python/dist; rm -f jsonteng.whl; ln -s jsonteng-${JSONTENG_BUILD_VERSION}-py3-none-any.whl jsonteng.whl; popd
 echo "Wheel distribuiton is in build/python/dist"

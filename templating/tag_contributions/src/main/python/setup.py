@@ -1,11 +1,12 @@
 # Copyright 2019 VMware, Inc.
 # SPDX-License-Indentifier: Apache-2.0
 
+import os
 import setuptools
 
 setuptools.setup(
     name="jsonteng-contribs",
-    version="1.0.2",
+    version=os.getenv("JSONTENG_CONTRIBS_BUILD_VERSION"),
     author="VMware",
     author_email="jimy@vmware.com",
     description="Tag contributions.",

@@ -6,7 +6,7 @@ import setuptools
 
 setuptools.setup(
     name="jsonreme",
-    version=os.getenv("JSONTENG_BUILD_VERSION"),
+    version=os.getenv("JSONREME_BUILD_VERSION"),
     author="VMware",
     author_email="jimy@vmware.com",
     description="JSON Remediator.",
