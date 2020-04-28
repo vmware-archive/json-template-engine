@@ -318,6 +318,8 @@ def main(args=None):
     if params.env:
         with open(params.env, "r") as fp:
             env = json.load(fp)
+    else:
+        env = dict()
     if not companion and params.drift:
         print("Must provide a companion to detect drifts.")
     if params.drift:
