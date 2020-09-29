@@ -7,15 +7,13 @@ repositories {
   jcenter()
 }
 
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
-version = "$System.env.JSONTENG_CONTRIBS_BUILD_VERSION"
-
 dependencies {
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.7'
-  implementation 'org.python:jython:2.7.1b3'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.2'
+  implementation 'org.python:jython:2.7.2'
   implementation 'commons-cli:commons-cli:1.3.1'
   implementation 'commons-net:commons-net:3.5'
   implementation "com.vmware.jsonteng:jsonteng:${System.env.JSONTENG_BUILD_VERSION}"
@@ -26,61 +24,41 @@ compileJava   {
   targetCompatibility = '1.8'
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-  classifier = 'javadoc'
-  from javadoc.destinationDir
-}
-
-task sourceJar(type: Jar) {
-  classifier = 'sources'
-  from sourceSets.main.allJava
-}
-
-artifacts {
-  archives jar, javadocJar, sourceJar
-}
-
-signing {
-  sign configurations.archives
-}
-
 group = "com.vmware.jsonteng"
 archivesBaseName = "jsonteng-contribs"
+version = "$System.env.JSONTENG_CONTRIBS_BUILD_VERSION"
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
 
 publishing {
   publications {
     mavenJava(MavenPublication) {
-      customizePom(pom)
+      artifactId = "jsonteng-contribs"
       from components.java
-      pom.withXml {
-        def pomFile = file("${project.buildDir}/generated-pom.xml")
-          writeTo(pomFile)
-          def pomAscFile = signing.sign(pomFile).signatureFiles[0]
-          artifact(pomAscFile) {
-            classifier = null
-            extension = 'pom.asc'
+      pom {
+        name = 'Json Template Engine - Tag Contributions'
+        description = 'Tag contributions for Json Template Engine.'
+        url = 'https://github.com/vmware/json-template-engine'
+        licenses {
+          license {
+            name = 'The Apache License, Version 2.0'
+            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
           }
-      }
-
-      artifact(sourceJar) {
-        classifier = 'sources'
-      }
-      artifact(javadocJar) {
-        classifier = 'javadoc'
-      }
-
-      project.tasks.signArchives.signatureFiles.each {
-        def ext_matcher = it =~ /\.jar\.asc$/
-        if (ext_matcher.find()) {
-          artifact(it) {
-            def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
-            if (matcher.find()) {
-              classifier = matcher.group(1)
-            } else {
-              classifier = null
-            }
-            extension = 'jar.asc'
+        }
+        developers {
+          developer {
+            id = 'jyangbos'
+            name = 'Jim Yang'
+            email = 'jimyangdev@gmail.com'
           }
+        }
+        scm {
+          connection = 'scm:svn:https://github.com/vmware/json-template-engine.git'
+          developerConnection = 'scm:svn:https://github.com/vmware/json-template-engine.git'
+          url = 'https://github.com/vmware/json-template-engine.git'
         }
       }
     }
@@ -96,55 +74,8 @@ publishing {
   }
 }
 
-def customizePom(pom) {
-  pom.withXml {
-        def root = asNode()
-
-        // eliminate test-scoped dependencies (no need in maven central POMs)
-        root.dependencies.removeAll { dep ->
-            dep.scope == "test"
-        }
-
-        // add all items necessary for maven central publication
-        root.children().last() + {
-            resolveStrategy = Closure.DELEGATE_FIRST
-
-            name 'Json Template Engine'
-            description 'A template engine for processing parameterized Json objects.'
-            url 'https://github.com/vmware/json-template-engine'
-
-            licenses {
-              license {
-                name 'The Apache License, Version 2.0'
-                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-              }
-            }
-            scm {
-              connection 'scm:svn:https://github.com/vmware/json-template-engine.git'
-              developerConnection 'scm:svn:https://github.com/vmware/json-template-engine.git'
-              url 'https://github.com/vmware/json-template-engine.git'
-            }
-            developers {
-              developer {
-                id 'jyangbos'
-                name 'Jim Yang'
-                email 'jimyangdev@gmail.com'
-              }
-            }
-        }
-    }
-}
-
-model {
-    tasks.generatePomFileForMavenJavaPublication {
-        destination = file("$buildDir/generated-pom.xml")
-    }
-    tasks.publishMavenJavaPublicationToMavenLocal {
-        dependsOn project.tasks.signArchives
-    }
-    tasks.publishMavenJavaPublicationToMavenRepository {
-        dependsOn project.tasks.signArchives
-    }
+signing {
+  sign publishing.publications.mavenJava
 }
 
 task copyToLib( type: Copy ) {
@@ -152,4 +83,6 @@ task copyToLib( type: Copy ) {
   from configurations.runtimeClasspath
 }
 
-jar { dependsOn copyToLib }
+jar {
+  dependsOn copyToLib
+}
