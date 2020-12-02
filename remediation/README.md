@@ -163,7 +163,9 @@ Remediator. User supplied functions may update them. JSON Remediator may read th
 | Parameter Name | Description |
 | ---------------|-------------|
 | \_\_crp | JSON pointer to the current element|
+| \_\_env | User provided environment variables|
 | _output | CLI prints out this value after remediation |
+
 In addition to above predefined parameters, the return value of every user supplied
 function call is stored in the workspace. The key's format is
 ```text
