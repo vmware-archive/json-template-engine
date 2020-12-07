@@ -65,7 +65,9 @@ class JsonRemediator(object):
         if isinstance(remediation_descriptors, dict):
             descriptors = list()
             JsonRemediator._convert_to_json_path(
-                remediation_descriptors, descriptors, dict())
+                remediation_descriptors, descriptors, {
+                    WS_CURRENT_POINTER: ''
+                })
         elif isinstance(remediation_descriptors, list):
             descriptors = remediation_descriptors
         else:
@@ -77,35 +79,40 @@ class JsonRemediator(object):
             raise RemediationEngineException("No valid remediation descriptors")
 
     @staticmethod
-    def _convert_to_json_path(descriptor_dict, descriptor_list, path):
+    def _convert_to_json_path(descriptor_dict, descriptor_list, workspace):
         """
         Convert a dict format descriptors to the list format descriptors.
         :param descriptor_dict: The dict format descriptors.
         :type descriptor_dict: dict
         :param descriptor_list: The list format descriptors.
         :type descriptor_list: list
-        :param path: A workspace.
-        :type path: dict
+        :param workspace: A workspace.
+        :type workspace: dict
         """
-        descriptor_list.append(
-            {
-                "path": path,
-                "descriptor": descriptor_dict
-            })
+        path = workspace['__crp']
+        descriptor_for_path = descriptor_dict.copy()
+        if DESCRIPTORS in descriptor_for_path:
+            del descriptor_for_path[DESCRIPTORS]
+        if descriptor_for_path:
+            descriptor_list.append(
+                {
+                    "path": f"^{path}$",
+                    "descriptor": descriptor_for_path
+                })
         descriptors = descriptor_dict.get(DESCRIPTORS)
         if descriptors:
             if isinstance(descriptors, dict):
                 for key, value in descriptors.items():
-                    JsonRemediator._push_crp(key, path)
+                    JsonRemediator._push_crp(key, workspace)
                     JsonRemediator._convert_to_json_path(
-                        value, descriptor_list, path)
-                    JsonRemediator._pop_crp(path)
+                        value, descriptor_list, workspace)
+                    JsonRemediator._pop_crp(workspace)
             elif isinstance(descriptors, list):
                 for idx, item in enumerate(descriptors):
-                    JsonRemediator._push_crp(idx, path)
+                    JsonRemediator._push_crp(idx, workspace)
                     JsonRemediator._convert_to_json_path(
-                        item, descriptor_list, path)
-                    JsonRemediator._pop_crp(path)
+                        item, descriptor_list, workspace)
+                    JsonRemediator._pop_crp(workspace)
 
     def remediate(self, target, companion=None, env=None):
         """
@@ -122,6 +129,7 @@ class JsonRemediator(object):
         workspace = dict()
         workspace[WS_CURRENT_POINTER] = ""
         workspace[WS_ENV] = env if env else dict()
+        workspace[WS_OUTPUT] = OrderedDict()
         self._remediate(target, companion, workspace)
         return workspace
 
@@ -331,7 +339,7 @@ def main(args=None):
     remediator = JsonRemediator(descriptors)
     workspace = remediator.remediate(target, companion, env)
     if not params.drift:
-        print(workspace.get(WS_OUTPUT))
+        print(f"workspace output: {workspace.get(WS_OUTPUT)}")
 
 
 if __name__ == "__main__":
