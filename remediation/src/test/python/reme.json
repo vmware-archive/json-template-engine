@@ -1,0 +1,27 @@
+{
+  "@descriptors": {
+    "my_key_1": {
+      "@before": "reme_ops.before_my_key_1",
+      "@after": "reme_ops.after_my_key_1",
+      "@descriptors": {
+        "my_sub_key_1": {
+          "@after": "reme_ops.after_my_sub_key_1_",
+          "@descriptors": [
+            {
+              "@after": "reme_ops.after_my_sub_key_1_0"
+            },
+            {
+              "@after": "reme_ops.after_my_sub_key_1_1"
+            },
+            {
+              "@after": "reme_ops.after_my_sub_key_1_2"
+            }
+          ]
+        }
+      }
+    },
+    "my_sub_key_2": {
+      "@after": "reme_ops.after_my_sub_key_2"
+    }
+  }
+}

@@ -15,19 +15,30 @@ class RemediationTests(unittest.TestCase):
         """
         self.stream = StringIO()
         sys.stdout = self.stream
-        pass
 
     def tearDown(self):
         """
         Tear down each test.
         """
         sys.stdout = sys.__stdout__
-        pass
 
     def test_drift_detection(self):
-        remediator.main(["-d",
+        remediator.main(["--drift",
                          "-c", "companion.json",
                          "target.json"])
         json_str = self.stream.getvalue().strip()
         self.assertEqual(json_str, 'Drift: path(/my_key_1/my_sub_key_1/0), '
                                    'target(xya), companion(xyK)')
+
+    def test_reme(self):
+        remediator.main(["-r", "reme.json",
+                         "target.json"])
+        json_str = self.stream.getvalue().strip()
+        self.assertEqual(json_str,
+                         "workspace output: OrderedDict(["
+                         "('before_my_key_1', \"reme: path /my_key_1 {'my_sub_key_1': ['xya', 'xyb', 'xyc'], 'my_sub_key_2': 'xyz'}\"), "
+                         "('after_my_sub_key_1_0', 'reme: path /my_key_1/my_sub_key_1/0 xya'), "
+                         "('after_my_sub_key_1_1', 'reme: path /my_key_1/my_sub_key_1/1 xyb'), "
+                         "('after_my_sub_key_1_2', 'reme: path /my_key_1/my_sub_key_1/2 xyc'), "
+                         "('after_my_sub_key_1_', \"reme: path /my_key_1/my_sub_key_1 ['xya', 'xyb', 'xyc']\"), "
+                         "('after_my_key_1', \"reme: path /my_key_1 {'my_sub_key_1': ['xya', 'xyb', 'xyc'], 'my_sub_key_2': 'xyz'}\")])")
