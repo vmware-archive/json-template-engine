@@ -140,8 +140,10 @@ has a convenient format of its remediation descriptors as
       "@after": "sum_k"
     },
     "h": {
-      "k3": {
-        "@after": "sum_k"
+      "@descriptions": {
+        "k3": {
+          "@after": "sum_k"
+        }
       }
     }
   }
