@@ -53,10 +53,12 @@ class Utils {
         int start = 0;
         int index;
         while ((index = escapedString.indexOf('\\', start)) != -1) {
-            builder.append(escapedString, start, index);
-            start = index + 1;
+            builder.append(escapedString, start, index).append(escapedString.charAt(index+1));
+            start = index + 2;
         }
-        builder.append(escapedString.substring(start));
+        if (start < escapedString.length()) {
+            builder.append(escapedString.substring(start));
+        }
         return builder.toString();
     }
 

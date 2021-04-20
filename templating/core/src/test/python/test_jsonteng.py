@@ -150,7 +150,7 @@ class TestJsonteng(unittest.TestCase):
         """
         Test resolving templates with one-of rule with invalid default (list).
         """
-        template = '{"x": ["#one-of",["1 == 2","false"], ["default"]]}'
+        template = '{"x": ["#one-of",["1 == 2","false"], ["invalid default"]]}'
         with self.assertRaises(TemplateEngineException):
             template_engine.main(["-r", "-b",
                                   '{"list":[{"z":"100"},{"z":"20"}]}',
