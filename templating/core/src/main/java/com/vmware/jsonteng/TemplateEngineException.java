@@ -3,7 +3,7 @@
 
 package com.vmware.jsonteng;
 
-public class TemplateEngineException extends Exception {
+public class TemplateEngineException extends RuntimeException {
     public TemplateEngineException(String message) {
         super(message);
     }
