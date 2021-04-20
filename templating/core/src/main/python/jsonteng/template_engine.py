@@ -5,6 +5,7 @@ import argparse
 import datetime
 import os
 import json
+import sys
 from collections import OrderedDict
 from importlib import import_module
 
@@ -107,7 +108,7 @@ class JsonTemplateEngine(object):
         return get_tag_names()
 
 
-def main(args=None):
+def main(args=None, file=sys.stdout):
     """
     CLI version of the template engine.
     """
@@ -130,7 +131,7 @@ def main(args=None):
                         help="unformatted output",
                         action="store_true")
     parser.add_argument('-t', '--tags', required=False,
-                        help="common separated tag list")
+                        help="comma separated tag list")
     parser.add_argument('main_template')
     params = parser.parse_args(args=args)
     binding_file_list = params.binding_data_resources.split(';')
@@ -145,9 +146,9 @@ def main(args=None):
     main_template = params.main_template
 
     if params.debug:
-        print("env data: {}".format(env_binding))
-        print("binding data: {}".format(binding_data_list))
-        print("main template: {}".format(main_template))
+        print("env data: {}".format(env_binding), file=file)
+        print("binding data: {}".format(binding_data_list), file=file)
+        print("main template: {}".format(main_template), file=file)
 
     if params.tags:
         tags = params.tags.split(',')
@@ -161,17 +162,17 @@ def main(args=None):
     if params.verbose:
         for dup_param in template_engine.get_duplicated_parameters():
             print("Warning: Parameter {} has duplicated values".
-                  format(dup_param))
+                  format(dup_param), file=file)
         delta = end_time - start_time
-        print("Resolved JSON in {}".format(delta))
+        print("Resolved JSON in {}".format(delta), file=file)
     if params.raw:
-        print(json.dumps(resolved_json))
+        print(json.dumps(resolved_json), file=file)
     else:
-        print(json.dumps(resolved_json, indent=2))
+        print(json.dumps(resolved_json, indent=2), file=file)
     if params.stats:
-        print("Parameter usage")
+        print("Parameter usage", file=file)
         param_map = template_engine.get_stats()
-        print(json.dumps(param_map, indent=2, sort_keys=True))
+        print(json.dumps(param_map, indent=2, sort_keys=True), file=file)
 
 
 # JsonTemplateEngine is primarily used as an embedded library. It can also be
