@@ -48,13 +48,14 @@ public:
         nlohmann::json value = entry.value();
         nlohmann::json new_key = unescape_json(key);
         nlohmann::json new_value = unescape_json(value);
-        new_element.emplace(key, value);
+        new_element.emplace(new_key, new_value);
       }
       return new_element;
     } else if (element.is_array()) {
       nlohmann::json new_element = nlohmann::json::array();
       for (auto item : element) {
         nlohmann::json new_item = unescape_json(item);
+        new_element.push_back(new_item);
       }
       return new_element;
     } else {
@@ -89,8 +90,7 @@ private:
     size_t start = 0;
     size_t index;
     while ((index = orig.find('\\', start)) != std::string::npos) {
-      builder += orig.substr(start, index - start);
-      builder += orig[index+1];
+      builder += orig.substr(start, index - start) + orig[index+1];
       start = index + 2;
     }
     if (start < orig.size()) {
