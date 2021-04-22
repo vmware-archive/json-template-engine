@@ -90,9 +90,12 @@ private:
     size_t index;
     while ((index = orig.find('\\', start)) != std::string::npos) {
       builder += orig.substr(start, index - start);
-      start = index + 1; 
+      builder += orig[index+1];
+      start = index + 2;
     }
-    builder += orig.substr(start);
+    if (start < orig.size()) {
+        builder += orig.substr(start);
+    }
     return builder;
   }
 
@@ -111,7 +114,7 @@ private:
         if (binding_data_map.find(name) == binding_data_map.end()) {
           binding_data_map.emplace(name, std::vector<nlohmann::json>());
         }
-        std::vector<nlohmann::json> values = binding_data_map[name];
+        std::vector<nlohmann::json> &values = binding_data_map[name];
         values.push_back(item.value());
       }
     }

@@ -80,7 +80,7 @@ class StringResolver(object):
                 i += 1
         if stack:
             raise TemplateEngineException(
-                "Mis-formed parameterized string. {}".format(str_data))
+                'Mis-formed parameterized string "{}".'.format(str_data))
         return str_data
 
     def _resolve_param(self, param_name, binding_data_list):
@@ -104,7 +104,7 @@ class StringResolver(object):
             except InvalidReferenceException:
                 pass
         raise UnresolvableParameterException(
-            "Unable to resolve parameter {}.".format(param_name))
+            'Unable to resolve parameter "{}".'.format(param_name))
 
     @staticmethod
     def _find_param(param_name, separator_indices, binding_data):

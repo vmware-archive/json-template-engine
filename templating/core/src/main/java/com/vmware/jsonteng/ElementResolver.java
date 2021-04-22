@@ -8,11 +8,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.vmware.jsonteng.tags.TagNone;
 
 public class ElementResolver {
     private final StringResolver stringResolver;
     private final TagResolver tagResolver;
+    private final ObjectMapper mapper = new ObjectMapper();
+
 
     ElementResolver(JsonLoader templateLoader, Stats stats) throws TemplateEngineException {
         stringResolver = new StringResolver(this, stats);
@@ -41,7 +46,7 @@ public class ElementResolver {
                 if (TagResolver.isKeyTag(key)) {
                     if (!(value instanceof List)) {
                         throw new TemplateEngineException(
-                                String.format("Value must be a list if name is a tag: %s %s", key, value));
+                                String.format("Value must be a list if name is a tag: \"%s\". Found \"%s\".", key, value));
                     }
                     List<Object> tagTemp = new ArrayList<>();
                     tagTemp.add(key);
@@ -51,9 +56,17 @@ public class ElementResolver {
                         newElement.putAll((Map) resolvedTuple);
                     }
                     else if (!(resolvedTuple instanceof TagNone)) {
+                        String keyStr = key.toString();
+                        String valueStr = value.toString();
+                        String resolvedTupleStr = resolvedTuple.toString();
+                        try {
+                            keyStr = mapper.writeValueAsString(key);
+                            valueStr = mapper.writeValueAsString(value);
+                            resolvedTupleStr = mapper.writeValueAsString(resolvedTuple);
+                        } catch (JsonProcessingException ex) {}
                         throw new TemplateEngineException(
-                                String.format("Invalid tag result format for JSON object name tag: %s %s => %s",
-                                              key, value, resolvedTuple));
+                                String.format("Invalid tag result format for JSON object name tag: %s %s => %s.",
+                                              keyStr, valueStr, resolvedTupleStr));
                     }
                 }
                 else {

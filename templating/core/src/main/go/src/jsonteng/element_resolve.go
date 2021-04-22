@@ -5,6 +5,7 @@ package jsonteng
 
 import (
 	"container/list"
+	"encoding/json"
 	"fmt"
 	"jsonteng/errors"
 	intfs "jsonteng/interfaces"
@@ -47,12 +48,16 @@ func (elementResolver *elementResolverImpl) ResolveElement(elementAny interface{
 						newElement = resolvedTupleMap
 					} else if reflect.TypeOf(resolvedTuple) != reflect.TypeOf(intfs.TagNone{}) {
 						errl := errors.GenericError
-						errl.Message = fmt.Sprintf("Invalid tag result format for JSON object name tag: %v %v => %v", key, value, resolvedTupleMap)
+						keyStr, _ := json.Marshal(key)
+						valueStr, _ := json.Marshal(value)
+						resolvedTupleStr, _ := json.Marshal(resolvedTuple)
+						errl.Message = fmt.Sprintf("Invalid tag result format for JSON object name tag: %s %s => %s.",
+							string(keyStr), string(valueStr), string(resolvedTupleStr))
 						return nil, errl
 					}
 				} else {
 					errl := errors.GenericError
-					errl.Message = fmt.Sprintf("Value must be a list if name is a tag: %v %v", key, value)
+					errl.Message = fmt.Sprintf("Value must be a list if name is a tag: \"%v\". Found \"%v\".", key, value)
 					return nil, &errl
 				}
 			} else {

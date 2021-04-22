@@ -44,7 +44,7 @@ public:
         } else {
           throw TemplateEngineException(std::string("Tag \"") + OneOfTag_name +
                                         "\" contains an invalid parameter. " +
-                                        item.dump());
+                                        item.dump() + ".");
         }
       }
     }

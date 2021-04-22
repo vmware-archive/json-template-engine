@@ -70,7 +70,7 @@ public:
     }
     if (!stack.empty()) {
       throw TemplateEngineException(
-          std::string("Mis-formed parameterized string. " + str_data));
+          std::string("Mis-formed parameterized string \"" + str_data + "\"."));
     }
     return str_data;
   }
@@ -93,7 +93,7 @@ private:
       }
     }
     throw UnresolvableParameterException(
-        std::string("Unable to resolve parameter " + param_name));
+        std::string("Unable to resolve parameter \"" + param_name + "\"."));
   }
 
   static nlohmann::json find_param(const std::string &param_name,
