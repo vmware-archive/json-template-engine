@@ -6,6 +6,9 @@ package com.vmware.jsonteng.tags;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.vmware.jsonteng.ElementResolver;
 import com.vmware.jsonteng.TagResolver;
 import com.vmware.jsonteng.TemplateEngineException;
@@ -14,6 +17,7 @@ public class OneOfTag extends TagBase {
     static final String name = "one-of";
 
     private final ElementResolver elementResolver;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public OneOfTag(TagResolver tagResolver) {
         super(tagResolver);
@@ -43,8 +47,12 @@ public class OneOfTag extends TagBase {
                     return elementResolver.resolve(tagTokens.get(tokenCount - 1), bindingDataList);
                 }
                 else {
+                    String itemStr = item.toString();
+                    try {
+                        itemStr = mapper.writeValueAsString(item);
+                    } catch (JsonProcessingException ex) {}
                     throw new TemplateEngineException(
-                            String.format("Tag \"%s\" contains an invalid parameter. %s", name, item));
+                            String.format("Tag \"%s\" contains an invalid parameter. %s.", name, itemStr));
                 }
             }
         }

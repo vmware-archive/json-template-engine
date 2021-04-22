@@ -94,7 +94,8 @@ func main() {
 	startTime := time.Now()
 	resolvedJson, err := engine.Resolve(mainTemplate, bindingDataList)
 	if err != nil {
-		fmt.Printf("Failed to resolve the JSON template %s due to %v\n", mainTemplate, err)
+		fmt.Println(err)
+		return
 	}
 	endTime := time.Now()
 	if cliParams.verbose {

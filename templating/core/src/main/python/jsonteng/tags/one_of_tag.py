@@ -1,5 +1,6 @@
 # Copyright 2019 VMware, Inc.
 # SPDX-License-Indentifier: Apache-2.0
+import json
 
 from ..exception import TemplateEngineException
 from .tag_base import TagBase
@@ -53,5 +54,5 @@ class OneOfTag(TagBase):
                 else:
                     raise TemplateEngineException(
                         "Tag \"{}\" contains an invalid parameter."
-                        " {}".format(OneOfTag.name, item))
+                        " {}.".format(OneOfTag.name, json.dumps(item, separators=(',', ':'))))
         return TagBase.TAG_NONE

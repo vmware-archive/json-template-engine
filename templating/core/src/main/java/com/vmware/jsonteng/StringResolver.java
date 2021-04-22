@@ -75,7 +75,7 @@ class StringResolver {
             }
         }
         if (!stack.empty()) {
-            throw new TemplateEngineException(String.format("Mis-formed parameterized string. %s", strData));
+            throw new TemplateEngineException(String.format("Mis-formed parameterized string \"%s\".", strData));
         }
         return strData;
     }
@@ -93,7 +93,7 @@ class StringResolver {
             catch (InvalidReferenceException ignore) {
             }
         }
-        throw new UnresolvableParameterException(String.format("Unable to resolve parameter %s", paramName));
+        throw new UnresolvableParameterException(String.format("Unable to resolve parameter \"%s\".", paramName));
     }
 
     @SuppressWarnings("unchecked")

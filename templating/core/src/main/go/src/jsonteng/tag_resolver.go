@@ -43,7 +43,7 @@ func (tagResolver *tagResolverImpl) resolve(tagData []interface{}, bindingDataLi
 		return tag.Process(tagToken, bindingDataList)
 	}
 	errl := errors.GenericError
-	errl.Message = fmt.Sprintf("Unknown tag %v", tagName)
+	errl.Message = fmt.Sprintf("Unknown tag \"%v\".", tagName)
 	return nil, &errl
 }
 

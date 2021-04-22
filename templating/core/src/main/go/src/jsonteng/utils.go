@@ -42,15 +42,17 @@ func unescapeString(escapedString *string) string {
 	unescaped := ""
 	start := 0
 	for index := strings.IndexByte(*escapedString, '\\'); index != -1; index = strings.IndexByte((*escapedString)[start:], '\\') {
-		unescaped = unescaped + (*escapedString)[start:index]
-		start = index + 1
+		unescaped += (*escapedString)[start:start+index] + string((*escapedString)[start+index+1])
+		start += index + 2
 	}
-	unescaped = unescaped + (*escapedString)[start:]
+	if start < len(*escapedString) {
+		unescaped += (*escapedString)[start:]
+	}
 	return unescaped
 }
 
 func checkDuplicatedBindingData(bindingDataList *list.List) *map[string][]interface{} {
-	bindingDataMap := make(map[string]list.List)
+	bindingDataMap := make(map[string]*list.List)
 	for bindingData := bindingDataList.Front(); bindingData != nil; bindingData = bindingData.Next() {
 		data := bindingData.Value.(map[string]interface{})
 		findParamTerminal("", &data, &bindingDataMap)
@@ -59,8 +61,10 @@ func checkDuplicatedBindingData(bindingDataList *list.List) *map[string][]interf
 	for k, v := range bindingDataMap {
 		if v.Len() > 1 {
 			d := make([]interface{}, v.Len())
+			i := 0
 			for e := v.Front(); e != nil; e = e.Next() {
-				d[len(d)] = e.Value
+				d[i] = e.Value
+				i += 1
 			}
 			dupMap[k] = d
 		}
@@ -68,7 +72,7 @@ func checkDuplicatedBindingData(bindingDataList *list.List) *map[string][]interf
 	return &dupMap
 }
 
-func findParamTerminal(superName string, bindingData *map[string]interface{}, bindingDataMap *map[string]list.List) {
+func findParamTerminal(superName string, bindingData *map[string]interface{}, bindingDataMap *map[string]*list.List) {
 	for name, v := range *bindingData {
 		if len(superName) == 0 {
 			name = superName + "." + name
@@ -77,8 +81,14 @@ func findParamTerminal(superName string, bindingData *map[string]interface{}, bi
 		case map[string]interface{}:
 			findParamTerminal(name, &value, bindingDataMap)
 		default:
-			l := (*bindingDataMap)[name]
-			l.PushFront(value)
+			var values *list.List
+			if l, ok := (*bindingDataMap)[name]; ok {
+				values = l
+			} else {
+				values = list.New()
+				(*bindingDataMap)[name] = values
+			}
+			(*values).PushFront(value)
 		}
 	}
 }

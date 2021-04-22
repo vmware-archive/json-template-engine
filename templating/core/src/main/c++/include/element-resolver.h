@@ -40,8 +40,8 @@ public:
         if (m_tag_resolver.is_key_tag(key)) {
           if (!value.is_array()) {
             throw TemplateEngineException(
-                std::string("Value must be a list if name is a tag: ") + key +
-                " " + value.dump());
+                std::string("Value must be a list if name is a tag: \"") + key +
+                "\". Found " + value.dump() + ".");
           }
           nlohmann::json tag_temp = nlohmann::json::array();
           tag_temp.push_back(key);
@@ -54,8 +54,8 @@ public:
             } else {
               throw TemplateEngineException(
                   std::string(
-                      "Invalid tag result format for JSON object name tag: ") +
-                  key + " " + value.dump() + " => " + resolved_tuple.dump());
+                      "Invalid tag result format for JSON object name tag: \"") +
+                  key + "\" " + value.dump() + " => " + resolved_tuple.dump() + ".");
             }
           } catch (TagNoneException &ignore) {
           }

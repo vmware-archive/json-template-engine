@@ -1,6 +1,6 @@
 # Copyright 2019 VMware, Inc.
 # SPDX-License-Indentifier: Apache-2.0
-
+import json
 from collections import OrderedDict
 from numbers import Number
 
@@ -52,7 +52,7 @@ class ElementResolver(object):
                 if TagResolver.is_key_tag(key):
                     if not isinstance(value, list):
                         raise TemplateEngineException(
-                            "Value must be a list if name is a tag: {} {}".
+                            "Value must be a list if name is a tag: \"{}\". Found \"{}\".".
                             format(key, value))
                     tag_temp = [key] + value
                     resolved_tuple = self.resolve(
@@ -62,8 +62,10 @@ class ElementResolver(object):
                     elif resolved_tuple is not TagBase.TAG_NONE:
                         raise TemplateEngineException(
                             "Invalid tag result format for JSON"
-                            " object name tag: {} {} => {}".
-                            format(key, value, resolved_tuple))
+                            " object name tag: {} {} => {}.".
+                            format(json.dumps(key, separators=(',', ':')),
+                                   json.dumps(value, separators=(',', ':')),
+                                   json.dumps(resolved_tuple, separators=(',', ':'))))
                 else:
                     new_key = self.resolve(key, binding_data_list)
                     new_value = self.resolve(value, binding_data_list)

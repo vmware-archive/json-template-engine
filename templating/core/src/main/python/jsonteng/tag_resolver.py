@@ -64,7 +64,7 @@ class TagResolver(object):
             tag_tokens = tag_data[1:]
             return tag.process(tag_tokens, binding_data_list)
         else:
-            raise TemplateEngineException("Unknown tag {}".format(tag_name))
+            raise TemplateEngineException("Unknown tag \"{}\".".format(tag_name))
 
     def get_element_resolver(self):
         """

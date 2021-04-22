@@ -28,3 +28,7 @@ echo
 echo ">>>> Build Go version ..."
 ./build_go.sh ${mode}
 echo
+
+# Run unit tests
+echo ">>>> Run unit tests ..."
+./test_all.sh

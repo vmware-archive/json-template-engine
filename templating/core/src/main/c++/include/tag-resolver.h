@@ -48,7 +48,7 @@ public:
       }
       return tag->process(tag_tokens, binding_data_list);
     } else {
-      throw TemplateEngineException(std::string("Unknown tag " + tag_name));
+      throw TemplateEngineException(std::string("Unknown tag \"" + tag_name + "\"."));
     }
   }
 

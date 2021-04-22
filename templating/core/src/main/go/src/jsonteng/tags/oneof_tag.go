@@ -5,6 +5,7 @@ package tags
 
 import (
 	"container/list"
+	"encoding/json"
 	"fmt"
 	"jsonteng/errors"
 	intfs "jsonteng/interfaces"
@@ -50,7 +51,8 @@ func (tag *oneofTag) Process(tagTokens []interface{}, bindingDataList *list.List
 				}
 			}
 			errl := errors.GenericError
-			errl.Message = fmt.Sprintf("Tag \"%s\" contains an invalid parameter. %v", tag.Name, tagTokens)
+			itemStr, _ := json.Marshal(item)
+			errl.Message = fmt.Sprintf("Tag \"%s\" contains an invalid parameter. %s.", tag.Name, string(itemStr))
 			return nil, &errl
 		}
 	}

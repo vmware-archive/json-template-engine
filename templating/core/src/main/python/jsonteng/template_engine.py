@@ -5,11 +5,11 @@ import argparse
 import datetime
 import os
 import json
-import sys
 from collections import OrderedDict
 from importlib import import_module
 
 from jsonteng.element_resolver import ElementResolver
+from jsonteng.exception import TemplateEngineException
 from jsonteng.tags.tag_map import add_tag, get_tag_names
 from jsonteng.stats import Stats
 from jsonteng.json_loader import DefaultJsonLoader
@@ -108,7 +108,7 @@ class JsonTemplateEngine(object):
         return get_tag_names()
 
 
-def main(args=None, file=sys.stdout):
+def main(args=None):
     """
     CLI version of the template engine.
     """
@@ -146,9 +146,9 @@ def main(args=None, file=sys.stdout):
     main_template = params.main_template
 
     if params.debug:
-        print("env data: {}".format(env_binding), file=file)
-        print("binding data: {}".format(binding_data_list), file=file)
-        print("main template: {}".format(main_template), file=file)
+        print("env data: {}".format(env_binding))
+        print("binding data: {}".format(binding_data_list))
+        print("main template: {}".format(main_template))
 
     if params.tags:
         tags = params.tags.split(',')
@@ -156,23 +156,27 @@ def main(args=None, file=sys.stdout):
 
     template_engine = JsonTemplateEngine(env_binding, verbose=params.verbose)
     start_time = datetime.datetime.now()
-    resolved_json = template_engine.resolve(
-        main_template, binding_data_list)
+    try:
+        resolved_json = template_engine.resolve(
+            main_template, binding_data_list)
+    except TemplateEngineException as e:
+        print(e)
+        exit(1)
     end_time = datetime.datetime.now()
     if params.verbose:
         for dup_param in template_engine.get_duplicated_parameters():
             print("Warning: Parameter {} has duplicated values".
-                  format(dup_param), file=file)
+                  format(dup_param))
         delta = end_time - start_time
-        print("Resolved JSON in {}".format(delta), file=file)
+        print("Resolved JSON in {}".format(delta))
     if params.raw:
-        print(json.dumps(resolved_json), file=file)
+        print(json.dumps(resolved_json, separators=(',', ':')))
     else:
-        print(json.dumps(resolved_json, indent=2), file=file)
+        print(json.dumps(resolved_json, indent=2))
     if params.stats:
-        print("Parameter usage", file=file)
+        print("Parameter usage")
         param_map = template_engine.get_stats()
-        print(json.dumps(param_map, indent=2, sort_keys=True), file=file)
+        print(json.dumps(param_map, indent=2, sort_keys=True))
 
 
 # JsonTemplateEngine is primarily used as an embedded library. It can also be

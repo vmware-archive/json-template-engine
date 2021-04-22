@@ -86,7 +86,7 @@ func (stringResolver *stringResolverImpl) resolveString(strData *string, binding
 	}
 	if stack.Len() > 0 {
 		errl = errors.GenericError
-		errl.Message = fmt.Sprintf("Mis-formed parameterized string. %s", *strData)
+		errl.Message = fmt.Sprintf("Mis-formed parameterized string \"%s\".", *strData)
 		return nil, &errl
 	}
 	return *strData, nil
@@ -103,7 +103,7 @@ func (stringResolver *stringResolverImpl) resolveParam(paramName *string, bindin
 		}
 	}
 	errl := errors.UnresolvableParameter
-	errl.Message = fmt.Sprintf("Unable to resolve parameter %s", *paramName)
+	errl.Message = fmt.Sprintf("Unable to resolve parameter \"%s\".", *paramName)
 	return nil, &errl
 }
 

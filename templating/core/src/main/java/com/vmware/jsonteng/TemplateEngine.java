@@ -122,15 +122,24 @@ public class TemplateEngine {
         JsonLoader loader = new DefaultJsonLoader(null, cmd.hasOption("verbose"));
         for (String fileName : bindingFileList.split(";")) {
             Map<String, ?> bindingData = null;
-            bindingData = (Map<String, ?>) loader.load(fileName);
-            loader.unload(fileName);
+            try {
+                bindingData = (Map<String, ?>) loader.load(fileName);
+                loader.unload(fileName);
+            } catch (TemplateEngineException e) {
+                System.out.println(e.getMessage());
+                System.exit(1);
+            }
             bindingDataList.add(bindingData);
         }
         Map<String, ?> envBinding = null;
-        if (cmd.hasOption("env")) {
-            String envString = cmd.getOptionValue("env");
-            envBinding = (Map<String, ?>) loader.load(envString);
-            loader.unload(envString);
+        try {
+            if (cmd.hasOption("env")) {
+                String envString = cmd.getOptionValue("env");
+                envBinding = (Map<String, ?>) loader.load(envString);
+                loader.unload(envString);
+            }
+        } catch (TemplateEngineException e) {
+            e.printStackTrace();
         }
 
         List<String> args = cmd.getArgList();
@@ -148,14 +157,30 @@ public class TemplateEngine {
 
         if (cmd.hasOption("tags")) {
             String[] tags = cmd.getOptionValue("tags").split(",");
-            TemplateEngine.addTags(tags);
+            try {
+                TemplateEngine.addTags(tags);
+            } catch (TemplateEngineException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
         }
 
         TemplateEngine engine = null;
-        engine = new TemplateEngine(envBinding);
+        try {
+            engine = new TemplateEngine(envBinding);
+        } catch (TemplateEngineException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
         long startTime = new Date().getTime();
         Object resolvedJson = null;
-        resolvedJson = engine.resolve(mainTemplate, bindingDataList);
+        try {
+            resolvedJson = engine.resolve(mainTemplate, bindingDataList);
+        } catch (TemplateEngineException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
         long endTime = new Date().getTime();
         if (cmd.hasOption("verbose")) {
             for (String dupParam: engine.getDupParams().keySet()) {

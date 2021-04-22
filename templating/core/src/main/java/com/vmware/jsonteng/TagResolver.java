@@ -35,7 +35,7 @@ public class TagResolver {
             return tag.process(tagToken, bindingDataList);
         }
         else {
-            throw new TemplateEngineException(String.format("Unknown tag %s", tagName));
+            throw new TemplateEngineException(String.format("Unknown tag \"%s\".", tagName));
         }
     }
 
