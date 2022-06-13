@@ -18,3 +18,6 @@ rm -f jsonteng_contribs.whl
 ln -s jsonteng_contribs-${JSONTENG_CONTRIBS_BUILD_VERSION}-py3-none-any.whl jsonteng_contribs.whl
 popd
 echo "Wheel distribuiton is in build/python/dist"
+if [ "x${mode}" == "xrelease" ]; then
+  python3 -m twine upload build/python/dist/jsonteng_contribs-${JSONTENG_CONTRIBS_BUILD_VERSION}-py3-none-any.whl
+fi

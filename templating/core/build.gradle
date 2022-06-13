@@ -23,6 +23,11 @@ compileJava   {
   targetCompatibility = '1.8'
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 group = "com.vmware.jsonteng"
 archivesBaseName = "jsonteng"
 version = "$System.env.JSONTENG_BUILD_VERSION"

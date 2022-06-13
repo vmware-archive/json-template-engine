@@ -15,3 +15,6 @@ rm -rf build jsonteng.egg-info
 popd
 pushd build/python/dist; rm -f jsonteng.whl; ln -s jsonteng-${JSONTENG_BUILD_VERSION}-py3-none-any.whl jsonteng.whl; popd
 echo "Wheel distribuiton is in build/python/dist"
+if [ "x${mode}" == "xrelease" ]; then
+  python3 -m twine upload build/python/dist/jsonteng-${JSONTENG_BUILD_VERSION}-py3-none-any.whl
+fi

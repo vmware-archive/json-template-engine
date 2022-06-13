@@ -11,7 +11,7 @@ fi
 mode=$1
 
 if [ "x$mode" == "xrelease" ]; then
-  ./gradlew build publish
+  ./gradlew build publish publishToMavenLocal
 else
   ./gradlew build publishToMavenLocal
 fi
