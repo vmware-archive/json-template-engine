@@ -1,4 +1,4 @@
-// Copyright 2019 VMware, Inc.
+// Copyright 2019,2022 VMware, Inc.
 // SPDX-License-Indentifier: Apache-2.0
 
 package com.vmware.jsonteng;
@@ -16,7 +16,7 @@ public class DefaultJsonLoader implements JsonLoader {
     private final ObjectMapper objectMapper;
     private final boolean verbose;
 
-    DefaultJsonLoader(String rootPath, boolean verbose) {
+    public DefaultJsonLoader(String rootPath, boolean verbose) {
         this.dirStack = new Stack<>();
         this.objectMapper = new ObjectMapper();
         if (rootPath == null) {
@@ -38,17 +38,17 @@ public class DefaultJsonLoader implements JsonLoader {
             final URL url = new URL(effectiveURL);
             jsonObject = objectMapper.readValue(url, Map.class);
             int lastDirIndex = effectiveURL.lastIndexOf('/');
-            dirStack.push(new DirData(jsonResource, effectiveURL.substring(0, lastDirIndex+1)));
+            dirStack.push(new DirData(jsonResource, effectiveURL.substring(0, lastDirIndex + 1)));
         } catch (IOException e) {
             if (verbose) {
-                System.err.println(String.format("Treat %s as JSON value.", effectiveURL));
+                System.err.printf("Treat %s as JSON value.%n", effectiveURL);
             }
             try {
-                jsonObject = objectMapper.readValue((String) jsonResource, Map.class);
+                jsonObject = objectMapper.readValue(jsonResource, Map.class);
             } catch (IOException e1) {
                 // Not a Map, try List.
                 try {
-                    jsonObject = objectMapper.readValue((String) jsonResource, List.class);
+                    jsonObject = objectMapper.readValue(jsonResource, List.class);
                 } catch (IOException e2) {
                     // Not a List, try number.
                     try {
@@ -75,9 +75,9 @@ public class DefaultJsonLoader implements JsonLoader {
         }
     }
 
-    private class DirData {
-        private Object jsonResource;
-        private String effectiveURL;
+    private static class DirData {
+        private final Object jsonResource;
+        private final String effectiveURL;
 
         DirData(Object jsonResource, String effectiveURL) {
             this.jsonResource = jsonResource;

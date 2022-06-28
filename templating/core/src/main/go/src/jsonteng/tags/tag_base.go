@@ -31,6 +31,18 @@ func BuildTagMap(tagResolver intfs.TagResolver) *map[string]intfs.TagProcessor {
 	oneofTag := oneofTag{}
 	oneofTag.init(tagResolver)
 	tagMap[oneofTag.Name] = &oneofTag
+	toboolTag := toboolTag{}
+	toboolTag.init(tagResolver)
+	tagMap[toboolTag.Name] = &toboolTag
+	tofloatTag := tofloatTag{}
+	tofloatTag.init(tagResolver)
+	tagMap[tofloatTag.Name] = &tofloatTag
+	tointTag := tointTag{}
+	tointTag.init(tagResolver)
+	tagMap[tointTag.Name] = &tointTag
+	tonullTag := tonullTag{}
+	tonullTag.init(tagResolver)
+	tagMap[tonullTag.Name] = &tonullTag
 
 	extMap := extTags.BuildTagMap(tagResolver)
 	for k, v := range extMap {

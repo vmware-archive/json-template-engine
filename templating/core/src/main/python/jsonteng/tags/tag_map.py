@@ -8,14 +8,21 @@ from .for_each_tag import ForEachTag
 from .exists_tag import ExistsTag
 from .len_tag import LenTag
 from .one_of_tag import OneOfTag
-
+from .to_bool_tag import ToBoolTag
+from .to_float_tag import ToFloatTag
+from .to_int_tag import ToIntTag
+from .to_null_tag import ToNullTag
 
 _tag_class_map = {
     AtTag.name: AtTag,
     ExistsTag.name: ExistsTag,
     ForEachTag.name: ForEachTag,
     LenTag.name: LenTag,
-    OneOfTag.name: OneOfTag
+    OneOfTag.name: OneOfTag,
+    ToIntTag.name: ToIntTag,
+    ToFloatTag.name: ToFloatTag,
+    ToBoolTag.name: ToBoolTag,
+    ToNullTag.name: ToNullTag
 }
 
 

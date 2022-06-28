@@ -1,4 +1,4 @@
-// Copyright 2019 VMware, Inc.
+// Copyright 2019, 2022 VMware, Inc.
 // SPDX-License-Indentifier: Apache-2.0
 
 #pragma once
@@ -13,6 +13,10 @@
 #include "foreach-tag.h"
 #include "len-tag.h"
 #include "oneof-tag.h"
+#include "tobool-tag.h"
+#include "tofloat-tag.h"
+#include "toint-tag.h"
+#include "tonull-tag.h"
 
 namespace jsonteng {
 
@@ -29,6 +33,14 @@ public:
                       std::shared_ptr<TagBase>(new LenTag(tag_resolver)));
     m_tag_map.emplace(OneOfTag_name,
                       std::shared_ptr<TagBase>(new OneOfTag(tag_resolver)));
+    m_tag_map.emplace(ToBoolTag_name,
+                      std::shared_ptr<TagBase>(new ToBoolTag(tag_resolver)));
+    m_tag_map.emplace(ToFloatTag_name,
+                      std::shared_ptr<TagBase>(new ToFloatTag(tag_resolver)));
+    m_tag_map.emplace(ToIntTag_name,
+                      std::shared_ptr<TagBase>(new ToIntTag(tag_resolver)));
+    m_tag_map.emplace(ToNullTag_name,
+                      std::shared_ptr<TagBase>(new ToNullTag(tag_resolver)));
     m_tag_map.emplace(
         Ipv4HostGateway_name,
         std::shared_ptr<TagBase>(new Ipv4HostGatewayTag(tag_resolver)));

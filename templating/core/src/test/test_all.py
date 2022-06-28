@@ -2,8 +2,7 @@ import os
 import subprocess
 import unittest
 
-
-RUNNER_PATH = os.getenv("RUNNER_PATH")
+# LIB_TOP is the parent directory of the git repo clone.
 LIB_TOP = os.getenv("LIB_TOP")
 core = f'{LIB_TOP}/json-template-engine/templating/core'
 tag_contrib = f'{LIB_TOP}/json-template-engine/templating/tag_contributions'
@@ -21,7 +20,7 @@ def _run_test(lang_type, input_params):
         p = subprocess.run(['python3', '-m', 'jsonteng.template_engine'] + input_params,
                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif lang_type == 'java':
-        p = subprocess.run(['java', '-cp', jars, 'com.vmware.jsonteng.TemplateEngine'] + input_params,
+        p = subprocess.run(['java', '-cp', jars, 'com.vmware.jsonteng.Cli'] + input_params,
                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif lang_type == 'c++':
         p = subprocess.run([f'{core}/build/c++/jsonteng'] + input_params,
@@ -188,3 +187,93 @@ class TestJsonteng(unittest.TestCase):
             output = _run_test(lang, ["-r", "-b", '{"list":[{"z":"100"},{"z":"20"}]}', template])
             self.assertEqual('Tag "one-of" contains an invalid parameter. ["invalid default"].\n',
                              output, f'test_oneof_invalid_type - {lang}')
+
+    def test_tobool_true(self):
+        """
+        Test resolving templates with to-bool rule.
+        """
+        template = '{"x": ["#to-bool", "${z}"]}'
+        for lang in TestJsonteng.lang_types:
+            output = _run_test(lang, ["-r", "-b", '{"z":"True"}', template])
+            self.assertEqual('{"x":true}\n',
+                             output, f'test_tobool_true - {lang}')
+
+    def test_tobool_false(self):
+        """
+        Test resolving templates with to-bool rule.
+        """
+        template = '{"x": ["#to-bool", "${z}"]}'
+        for lang in TestJsonteng.lang_types:
+            output = _run_test(lang, ["-r", "-b", '{"z":"False"}', template])
+            self.assertEqual('{"x":false}\n',
+                             output, f'test_tobool_false - {lang}')
+
+    def test_tobool_invalid_str(self):
+        """
+        Test resolving templates with to-bool rule.
+        """
+        template = '{"x": ["#to-bool", "${z}"]}'
+        for lang in TestJsonteng.lang_types:
+            output = _run_test(lang, ["-r", "-b", '{"z":"Not a bool"}', template])
+            self.assertEqual('Tag "to-bool" invalid string "Not a bool"\n',
+                             output, f'test_tobool_invalid_str - {lang}')
+
+    def test_tofloat(self):
+        """
+        Test resolving templates with to-float rule.
+        """
+        template = '{"x": ["#to-float", "${z}"]}'
+        for lang in TestJsonteng.lang_types:
+            output = _run_test(lang, ["-r", "-b", '{"z":"3.14"}', template])
+            self.assertEqual('{"x":3.14}\n',
+                             output, f'test_tofloat - {lang}')
+
+    def test_tofloat_invalid_str(self):
+        """
+        Test resolving templates with to-float rule.
+        """
+        template = '{"x": ["#to-float", "${z}"]}'
+        for lang in TestJsonteng.lang_types:
+            output = _run_test(lang, ["-r", "-b", '{"z":"abc"}', template])
+            self.assertEqual('Tag "to-float" invalid string "abc"\n',
+                             output, f'test_tofloat_invalid_str - {lang}')
+
+    def test_toint(self):
+        """
+        Test resolving templates with to-int rule.
+        """
+        template = '{"x": ["#to-int", "${z}"]}'
+        for lang in TestJsonteng.lang_types:
+            output = _run_test(lang, ["-r", "-b", '{"z":"100"}', template])
+            self.assertEqual('{"x":100}\n',
+                             output, f'test_toint - {lang}')
+
+    def test_toint_invalid_str(self):
+        """
+        Test resolving templates with to-int rule.
+        """
+        template = '{"x": ["#to-int", "${z}"]}'
+        for lang in TestJsonteng.lang_types:
+            output = _run_test(lang, ["-r", "-b", '{"z":"abc"}', template])
+            self.assertEqual('Tag "to-int" invalid string "abc"\n',
+                             output, f'test_toint_invalid_str - {lang}')
+
+    def test_tonull(self):
+        """
+        Test resolving templates with to-int rule.
+        """
+        template = '{"x": ["#to-null", "${z}"]}'
+        for lang in TestJsonteng.lang_types:
+            output = _run_test(lang, ["-r", "-b", '{"z":"Null"}', template])
+            self.assertEqual('{"x":null}\n',
+                             output, f'test_tonull - {lang}')
+
+    def test_tonull_invalid_str(self):
+        """
+        Test resolving templates with to-int rule.
+        """
+        template = '{"x": ["#to-null", "${z}"]}'
+        for lang in TestJsonteng.lang_types:
+            output = _run_test(lang, ["-r", "-b", '{"z":"xyz"}', template])
+            self.assertEqual('Tag "to-null" invalid string "xyz"\n',
+                             output, f'test_tonull_invalid_str - {lang}')

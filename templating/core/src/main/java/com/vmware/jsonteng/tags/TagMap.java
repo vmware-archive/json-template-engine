@@ -23,6 +23,10 @@ public class TagMap {
         tagClassMap.put(ForEachTag.name, ForEachTag.class);
         tagClassMap.put(LenTag.name, LenTag.class);
         tagClassMap.put(OneOfTag.name, OneOfTag.class);
+        tagClassMap.put(ToBoolTag.name, ToBoolTag.class);
+        tagClassMap.put(ToFloatTag.name, ToFloatTag.class);
+        tagClassMap.put(ToIntTag.name, ToIntTag.class);
+        tagClassMap.put(ToNullTag.name, ToNullTag.class);
     }
 
     @SuppressWarnings("unchecked")

@@ -31,4 +31,6 @@ echo
 
 # Run unit tests
 echo ">>>> Run unit tests ..."
+LIB_TOP=../../../
+export LIB_TOP
 ./test_all.sh
