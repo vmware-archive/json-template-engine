@@ -25,7 +25,7 @@ class Utils {
         }
         else if (element instanceof Map) {
             Map<Object, Object> newElement = new HashMap<>();
-            for (Map.Entry entry : ((Map<Object, Object>) element).entrySet()) {
+            for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) element).entrySet()) {
                 Object key = entry.getKey();
                 Object value = entry.getValue();
                 Object newKey = unescapeJson(key);
@@ -62,13 +62,13 @@ class Utils {
         return builder.toString();
     }
 
-    static Map<String, List> checkDuplicatedBindingData(List<Map<String,?>> bindingDataList) {
-        Map<String, List> bindingDataMap = new HashMap<>();
+    static Map<String, List<Object>> checkDuplicatedBindingData(List<Map<String,?>> bindingDataList) {
+        Map<String, List<Object>> bindingDataMap = new HashMap<>();
         for (Map<String, ?> bindingData : bindingDataList) {
             findParamTerminal(null, bindingData, bindingDataMap);
         }
-        Map<String, List> dupMap = new HashMap<>();
-        for (Map.Entry<String, List> item : bindingDataMap.entrySet()) {
+        Map<String, List<Object>> dupMap = new HashMap<>();
+        for (Map.Entry<String, List<Object>> item : bindingDataMap.entrySet()) {
             if (item.getValue().size() > 1) {
                 dupMap.put(item.getKey(), item.getValue());
             }
@@ -77,7 +77,7 @@ class Utils {
     }
 
     private static void findParamTerminal(
-            String superName, Map<String, ?> bindingData, Map<String, List> bindingDataMap) {
+            String superName, Map<String, ?> bindingData, Map<String, List<Object>> bindingDataMap) {
         for (Map.Entry<String, ?> item : bindingData.entrySet()) {
             String name = item.getKey();
             if (superName != null) {

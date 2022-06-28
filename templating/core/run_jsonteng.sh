@@ -15,7 +15,7 @@ python)
   ;;
 java)
   jars=${core}/build/libs/jsonteng.jar:${tag_contrib}/build/libs/jsonteng-contribs.jar:${java_libs}/jackson-databind-2.9.7.jar:${java_libs}/jython-2.7.1b3.jar:${java_libs}/commons-cli-1.3.1.jar:${java_libs}/jackson-annotations-2.9.0.jar:${java_libs}/jackson-core-2.9.7.jar
-  java -cp ${jars} com.vmware.jsonteng.TemplateEngine $*
+  java -cp ${jars} com.vmware.jsonteng.Cli $*
   ;;
 cpp)
   ${core}/build/c++/jsonteng $*
