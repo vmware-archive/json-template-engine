@@ -144,8 +144,12 @@ Supported Tags
 | #at  | Return a value at an index or name depending the object. | ["#at", [10, 11, 12], 1]|
 | #exists | Check if a parameter is set. Returns True if a parameter is assigned a value.| ["#exists", "${x}"] |
 | #for-each | Loop through an array and use the array element as the first binding data and apply it to a template.| ["#for-each", [{"x": 1}, {"x": 2}], "template.json"]|
-| #len | Retun the length of a JSON value. | ["#at", [1, 2, 3]]|
+| #len | Retun the length of a JSON value. | ["#len", [1, 2, 3]]|
 | #one-of | Select a JSON value when condition is True. | ["#one-of", ["${x} == 1", "one"], "other"] |
+| #to-bool | Convert string "true" or "false" to corresponding JSON value true or false. | ["#to-bool", "true"] |
+| #to-float | Convert a decimal string to JSON float value. | ["#to-float", "3.14"] |
+| #to-int | Convert an integer string to JSON integer value. | ["#to-int", "5"] |
+| #to-null | Convert string "null" to JSON null value. | ["#to-null", "null"] |
 
 
 ## Contributing
